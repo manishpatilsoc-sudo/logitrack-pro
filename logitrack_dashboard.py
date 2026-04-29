@@ -13,19 +13,30 @@ st.markdown("""
 .stApp{background:#030312!important;color:#e2e8f0!important;}
 [data-testid="stSidebar"]{background:linear-gradient(180deg,#060618 0%,#04040f 100%)!important;border-right:1px solid rgba(129,140,248,0.08)!important;}
 [data-testid="stSidebarContent"]{padding:20px 12px!important;}
-.block-container{padding-top:1.6rem!important;padding-bottom:1rem!important;max-width:100%!important;}
+
+/* FIX 1: Hide keyboard_double text and sidebar arrows */
+[data-testid="stSidebarCollapseButton"]{display:none!important;}
+[data-testid="collapsedControl"]{display:none!important;}
+button[aria-label="Close sidebar"]{display:none!important;}
+button[aria-label="Open sidebar"]{display:none!important;}
+[data-testid="stSidebarHeader"]{display:none!important;}
+section[data-testid="stSidebar"] > div > div.st-emotion-cache-1dp5vir{display:none!important;}
+
+/* FIX 2: Title not cut - enough top space */
+.block-container{padding-top:2.2rem!important;padding-bottom:1rem!important;max-width:100%!important;}
+
 #MainMenu,footer,[data-testid="stToolbar"],.viewerBadge_container__1QSob{display:none!important;visibility:hidden!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button{
   background:rgba(255,255,255,0.02)!important;border:none!important;color:#4b5563!important;
   font-weight:500!important;font-size:13px!important;border-radius:12px!important;
   text-align:left!important;padding:9px 12px!important;margin-bottom:2px!important;
-  width:100%!important;justify-content:flex-start!important;transition:all 0.15s!important;}
+  width:100%!important;justify-content:flex-start!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button:hover{background:rgba(129,140,248,0.1)!important;color:#a5b4fc!important;}
 [data-testid="stPills"]{gap:5px!important;flex-wrap:wrap!important;}
 [data-testid="stPills"] span[role="checkbox"],[data-testid="stPills"] span[role="radio"]{
   background:transparent!important;border:1px solid rgba(129,140,248,0.22)!important;
   color:#64748b!important;font-size:11px!important;font-weight:500!important;
-  padding:4px 13px!important;border-radius:20px!important;cursor:pointer!important;line-height:1.5!important;}
+  padding:4px 13px!important;border-radius:20px!important;line-height:1.5!important;}
 [data-testid="stPills"] span[role="checkbox"][aria-checked="true"],
 [data-testid="stPills"] span[role="radio"][aria-checked="true"],
 [data-testid="stPills"] span[aria-selected="true"]{
@@ -47,7 +58,7 @@ hr{border-color:rgba(129,140,248,0.06)!important;margin:14px 0!important;}
 def load_data():
     df = pd.read_csv("supply_chain_2024_25.csv")
     df["Order_Date"] = pd.to_datetime(df["Order_Date"])
-    df["Month"] = df["Order_Date"].dt.strftime("%Y-%m")
+    df["Month"] = df["Order_Date"].dt.strftime("%b '%y")
     return df
 
 df = load_data()
@@ -56,24 +67,11 @@ PAL = ["#818cf8","#06b6d4","#10b981","#f59e0b","#ec4899","#f43f5e","#a78bfa","#2
 STATUS_CLR = {"Delivered":"#10b981","In Transit":"#3b82f6","Delayed":"#f43f5e","Cancelled":"#6b7280","Pending":"#f59e0b"}
 GLOW = {"indigo":"#818cf8","cyan":"#06b6d4","green":"#10b981","red":"#f43f5e","yellow":"#f59e0b","gray":"#6b7280","pink":"#ec4899"}
 
-# Exact tooltip style from image
-HOVERLABEL = dict(
-    bgcolor="#0d1117",
-    bordercolor="rgba(129,140,248,0.5)",
-    font=dict(color="#e2e8f0", size=13, family="Inter"),
-    align="left",
-    namelength=-1,
-)
+HOVERLABEL = dict(bgcolor="#0d1117",bordercolor="rgba(129,140,248,0.5)",
+    font=dict(color="#e2e8f0",size=13,family="Inter"),align="left",namelength=-1)
 
-# Spike line exactly like image 1 - solid white thin line
-SPIKE_X = dict(
-    showspikes=True,
-    spikecolor="rgba(255,255,255,0.75)",
-    spikethickness=1,
-    spikedash="solid",
-    spikemode="across",
-    spikesnap="cursor",
-)
+SPIKE_X = dict(showspikes=True,spikecolor="rgba(255,255,255,0.75)",
+    spikethickness=1,spikedash="solid",spikemode="across",spikesnap="cursor")
 
 def base_layout(height=300, title="", icon="", hovermode="x unified"):
     return dict(
@@ -81,29 +79,26 @@ def base_layout(height=300, title="", icon="", hovermode="x unified"):
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         height=height,
-        font=dict(color="#64748b", family="Inter", size=11),
-        margin=dict(l=14, r=14, t=48, b=14),
-        title=dict(
-            text=f"<b>{icon}  {title}</b>" if title else "",
-            x=0.01, y=0.97,
-            font=dict(color="#c7d2fe", size=13, family="Inter"),
-        ),
+        font=dict(color="#64748b",family="Inter",size=11),
+        margin=dict(l=14,r=14,t=48,b=14),
+        title=dict(text=f"<b>{icon}  {title}</b>" if title else "",x=0.01,y=0.97,
+            font=dict(color="#c7d2fe",size=13,family="Inter")),
         legend=dict(font=dict(color="#64748b",size=10),bgcolor="rgba(0,0,0,0)",
             orientation="h",yanchor="bottom",y=-0.2,xanchor="center",x=0.5),
         xaxis=dict(gridcolor="rgba(255,255,255,0.04)",tickfont=dict(color="#475569",size=10),
-            showline=False, zeroline=False, **SPIKE_X),
+            showline=False,zeroline=False,**SPIKE_X),
         yaxis=dict(gridcolor="rgba(255,255,255,0.04)",tickfont=dict(color="#475569",size=10),
-            showline=False, zeroline=False),
+            showline=False,zeroline=False),
         hoverlabel=HOVERLABEL,
         hovermode=hovermode,
     )
 
 def show(fig, height=300, title="", icon="", hovermode="x unified"):
-    fig.update_layout(**base_layout(height, title, icon, hovermode))
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    fig.update_layout(**base_layout(height,title,icon,hovermode))
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar":False})
 
 def kpi(icon, label, value, sub, color):
-    g = GLOW.get(color, "#818cf8")
+    g = GLOW.get(color,"#818cf8")
     return f"""
 <div style="flex:1 1 145px;min-width:130px;position:relative;overflow:hidden;
   background:linear-gradient(145deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01));
@@ -125,11 +120,10 @@ def kpi(icon, label, value, sub, color):
 def kpi_row(cards):
     return '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">'+''.join(cards)+'</div>'
 
-# TITLE FIX - no overflow, always fully visible
 def page_header(title):
     st.markdown(f"""
-<div style="margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(129,140,248,0.08);overflow:visible;">
-  <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+<div style="margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(129,140,248,0.08);">
+  <div style="display:flex;align-items:center;gap:12px;">
     <div style="width:6px;min-width:6px;height:32px;background:linear-gradient(180deg,#a5b4fc,#4f46e5);
       border-radius:4px;box-shadow:0 0 16px rgba(129,140,248,0.8);"></div>
     <span style="font-size:22px;font-weight:900;color:#e2e8f0;letter-spacing:-0.02em;white-space:nowrap;">{title}</span>
@@ -223,24 +217,26 @@ if page == "overview":
     rated=d["Quality_Rating"].dropna(); avg_q=rated.mean() if len(rated) else 0
 
     st.markdown(kpi_row([
-        kpi("📦","TOTAL ORDERS",  f"{n:,}",                  "filtered records",                              "indigo"),
-        kpi("💰","REVENUE",       f"₹{rev/1e5:.1f}L",        "final cost INR",                                "cyan"),
-        kpi("⏱️","AVG LEAD TIME", f"{avg_lt:.1f}d",           "order → delivery",                             "green"),
+        kpi("📦","TOTAL ORDERS",  f"{n:,}",                  "filtered records","indigo"),
+        kpi("💰","REVENUE",       f"₹{rev/1e5:.1f}L",        "final cost INR","cyan"),
+        kpi("⏱️","AVG LEAD TIME", f"{avg_lt:.1f}d",           "order → delivery","green"),
         kpi("🚨","DELAYED ORDERS",f"{delayed:,}",            f"{delayed/n*100:.0f}% delay rate" if n else "0%","red"),
-        kpi("✅","DELIVERED",     f"{dlvrd/n*100:.0f}%",     f"{dlvrd} orders",                               "green"),
-        kpi("⭐","AVG QUALITY",   f"{avg_q:.2f}" if avg_q else "–","rating / 5.0",                           "yellow"),
+        kpi("✅","DELIVERED",     f"{dlvrd/n*100:.0f}%",     f"{dlvrd} orders","green"),
+        kpi("⭐","AVG QUALITY",   f"{avg_q:.2f}" if avg_q else "–","rating / 5.0","yellow"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns([3,2])
     with c1:
         mdf = pd.read_sql("SELECT Month, COUNT(*) AS Orders FROM sc GROUP BY Month ORDER BY Month", con)
         fig = go.Figure()
+        # FIX 3: Strong glow fill + white marker dot
         fig.add_trace(go.Scatter(
             x=mdf["Month"], y=mdf["Orders"],
             mode="lines+markers",
             line=dict(color="#818cf8", width=3, shape="spline"),
-            marker=dict(size=7, color="#ffffff", line=dict(width=2, color="#818cf8")),
-            fill="tozeroy", fillcolor="rgba(129,140,248,0.12)",
+            marker=dict(size=8, color="#ffffff", line=dict(width=2, color="#818cf8")),
+            fill="tozeroy",
+            fillcolor="rgba(129,140,248,0.22)",
             name="Orders",
             hovertemplate="Orders: <b>%{y}</b><extra></extra>",
         ))
@@ -250,24 +246,22 @@ if page == "overview":
         sdf = pd.read_sql("SELECT Order_Status, COUNT(*) AS Count FROM sc GROUP BY Order_Status", con)
         fig = px.pie(sdf, values="Count", names="Order_Status", hole=0.54,
                      color="Order_Status", color_discrete_map=STATUS_CLR)
-        fig.update_traces(
-            textfont_size=11, textinfo="percent+label",
-            marker=dict(line=dict(color="#030312", width=2.5)),
-            hovertemplate="<b>%{label}</b><br>Orders: <b>%{value}</b><br>Share: <b>%{percent}</b><extra></extra>",
-        )
+        fig.update_traces(textfont_size=11, textinfo="percent+label",
+            marker=dict(line=dict(color="#030312",width=2.5)),
+            hovertemplate="<b>%{label}</b><br>Orders: <b>%{value}</b><br>Share: <b>%{percent}</b><extra></extra>")
         show(fig, 310, "Order Status Split", "🥧", "closest")
 
     c3, c4 = st.columns(2)
     with c3:
+        # FIX 4: Bar chart - use hovermode closest to avoid duplicate name
         cdf = pd.read_sql("SELECT Category, ROUND(SUM(Final_Cost_INR)/1000,1) AS Rev_K FROM sc GROUP BY Category ORDER BY Rev_K DESC", con)
-        fig = px.bar(cdf, x="Category", y="Rev_K", color="Category", color_discrete_sequence=PAL, text="Rev_K")
-        fig.update_traces(
-            texttemplate="₹%{text:.0f}K", textposition="outside",
+        fig = px.bar(cdf, x="Category", y="Rev_K", color="Category",
+                     color_discrete_sequence=PAL, text="Rev_K")
+        fig.update_traces(texttemplate="₹%{text:.0f}K", textposition="outside",
             marker_line_width=0, marker_cornerradius=8,
-            hovertemplate="<b>%{x}</b><br>Revenue: <b>₹%{y:.0f}K</b><extra></extra>",
-        )
+            hovertemplate="<b>%{x}</b><br>Revenue: <b>₹%{y:.0f}K</b><extra></extra>")
         fig.update_layout(showlegend=False)
-        show(fig, 290, "Revenue by Category (₹K)", "💰", "x unified")
+        show(fig, 290, "Revenue by Category (₹K)", "💰", "closest")
 
     with c4:
         mrev = pd.read_sql("SELECT Month, ROUND(SUM(Final_Cost_INR)/1000,1) AS Rev_K FROM sc GROUP BY Month ORDER BY Month", con)
@@ -276,8 +270,8 @@ if page == "overview":
             x=mrev["Month"], y=mrev["Rev_K"],
             mode="lines+markers",
             line=dict(color="#06b6d4", width=3, shape="spline"),
-            marker=dict(size=7, color="#ffffff", line=dict(width=2, color="#06b6d4")),
-            fill="tozeroy", fillcolor="rgba(6,182,212,0.09)",
+            marker=dict(size=8, color="#ffffff", line=dict(width=2, color="#06b6d4")),
+            fill="tozeroy", fillcolor="rgba(6,182,212,0.2)",
             hovertemplate="Revenue: <b>₹%{y:.0f}K</b><extra></extra>",
         ))
         show(fig, 290, "Monthly Revenue (₹K)", "📈", "x unified")
@@ -298,11 +292,11 @@ elif page == "delivery":
     in_transit=(d["Order_Status"]=="In Transit").sum(); dd=d[d["Delay_Days"]>0]["Delay_Days"]; avg_delay=dd.mean() if len(dd) else 0
 
     st.markdown(kpi_row([
-        kpi("📦","TOTAL ORDERS",f"{n:,}",          "in selection",                                        "indigo"),
-        kpi("🚨","DELAYED",     f"{delayed:,}",    f"{delayed/n*100:.1f}% rate" if n else "0%",            "red"),
-        kpi("✅","DELIVERED",   f"{on_time:,}",    f"{on_time/n*100:.1f}% on-time" if n else "0%",         "green"),
-        kpi("⏳","AVG DELAY",   f"{avg_delay:.1f}d","when delayed",                                        "yellow"),
-        kpi("🔄","IN TRANSIT",  f"{in_transit:,}", "pending delivery",                                     "cyan"),
+        kpi("📦","TOTAL ORDERS",f"{n:,}","in selection","indigo"),
+        kpi("🚨","DELAYED",f"{delayed:,}",f"{delayed/n*100:.1f}% rate" if n else "0%","red"),
+        kpi("✅","DELIVERED",f"{on_time:,}",f"{on_time/n*100:.1f}% on-time" if n else "0%","green"),
+        kpi("⏳","AVG DELAY",f"{avg_delay:.1f}d","when delayed","yellow"),
+        kpi("🔄","IN TRANSIT",f"{in_transit:,}","pending delivery","cyan"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
@@ -316,7 +310,7 @@ elif page == "delivery":
             marker_line_width=0, marker_cornerradius=8,
             hovertemplate="<b>%{x}</b><br>Delay Rate: <b>%{y:.1f}%</b><extra></extra>")
         fig.update_layout(showlegend=False)
-        show(fig, 290, "Delay Rate by Shipping Mode", "📦", "x unified")
+        show(fig, 290, "Delay Rate by Shipping Mode", "📦", "closest")
 
     with c2:
         q2 = pd.read_sql("""SELECT Month,
@@ -340,7 +334,7 @@ elif page == "delivery":
             marker_line_width=0, marker_cornerradius=8,
             hovertemplate="<b>%{x}</b><br>Avg Lead: <b>%{y:.1f} days</b><extra></extra>")
         fig.update_layout(showlegend=False)
-        show(fig, 290, "Avg Lead Time by Category", "⏱️", "x unified")
+        show(fig, 290, "Avg Lead Time by Category", "⏱️", "closest")
 
     with c4:
         q4 = pd.read_sql("SELECT Category, Order_Status, COUNT(*) AS Count FROM sc GROUP BY Category, Order_Status", con)
@@ -354,7 +348,7 @@ elif page == "cost":
     page_header("Cost & Revenue Analysis")
     fbar_open()
     c1, c2 = st.columns(2)
-    with c1: sel_cat = pills("Category",      df["Category"].unique(),      "cs_cat")
+    with c1: sel_cat = pills("Category", df["Category"].unique(), "cs_cat")
     with c2: sel_pay = pills("Payment Terms", df["Payment_Terms"].unique(), "cs_pay")
     fbar_close()
 
@@ -364,44 +358,37 @@ elif page == "cost":
     avg_disc=d["Discount_Pct"].mean() if n else 0; avg_unit=d["Unit_Cost_INR"].mean() if n else 0
 
     st.markdown(kpi_row([
-        kpi("💰","TOTAL REVENUE",f"₹{rev/1e5:.1f}L",          "final cost INR",                                "cyan"),
-        kpi("🚛","TOTAL FREIGHT",f"₹{freight/1e5:.1f}L",      f"{freight/rev*100:.1f}% of rev" if rev else "–", "red"),
-        kpi("🏷️","AVG DISCOUNT", f"{avg_disc:.1f}%",            "applied to orders",                            "yellow"),
-        kpi("📈","NET MARGIN",   f"₹{(rev-freight)/1e5:.1f}L", "revenue − freight",                            "green"),
-        kpi("📦","AVG UNIT COST",f"₹{avg_unit:,.0f}",           "per unit",                                    "indigo"),
+        kpi("💰","TOTAL REVENUE",f"₹{rev/1e5:.1f}L","final cost INR","cyan"),
+        kpi("🚛","TOTAL FREIGHT",f"₹{freight/1e5:.1f}L",f"{freight/rev*100:.1f}% of rev" if rev else "–","red"),
+        kpi("🏷️","AVG DISCOUNT",f"{avg_disc:.1f}%","applied to orders","yellow"),
+        kpi("📈","NET MARGIN",f"₹{(rev-freight)/1e5:.1f}L","revenue − freight","green"),
+        kpi("📦","AVG UNIT COST",f"₹{avg_unit:,.0f}","per unit","indigo"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
     with c1:
-        # Exact image 2 style - grouped bar with x unified tooltip
         q = pd.read_sql("""SELECT Category,
             ROUND(SUM(Final_Cost_INR)/1000,1) AS Rev_K,
             ROUND(SUM(Freight_Cost_INR)/1000,1) AS Frgt_K
             FROM sc GROUP BY Category ORDER BY Rev_K DESC""", con)
         fig = go.Figure()
-        fig.add_trace(go.Bar(
-            name="Revenue ₹K", x=q["Category"], y=q["Rev_K"],
+        fig.add_trace(go.Bar(name="Revenue ₹K", x=q["Category"], y=q["Rev_K"],
             marker_color="#818cf8", marker_cornerradius=7,
-            hovertemplate="Revenue ₹K: <b>%{y:.0f}</b><extra></extra>",
-        ))
-        fig.add_trace(go.Bar(
-            name="Freight ₹K", x=q["Category"], y=q["Frgt_K"],
+            hovertemplate="Revenue: <b>₹%{y:.0f}K</b><extra></extra>"))
+        fig.add_trace(go.Bar(name="Freight ₹K", x=q["Category"], y=q["Frgt_K"],
             marker_color="#f43f5e", marker_cornerradius=7,
-            hovertemplate="Freight ₹K: <b>%{y:.0f}</b><extra></extra>",
-        ))
+            hovertemplate="Freight: <b>₹%{y:.0f}K</b><extra></extra>"))
         fig.update_layout(**base_layout(300,"Revenue vs Freight by Category (₹K)","💰","x unified"), barmode="group")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar":False})
 
     with c2:
         q2 = pd.read_sql("SELECT Month, ROUND(SUM(Final_Cost_INR)/1000,1) AS Rev_K FROM sc GROUP BY Month ORDER BY Month", con)
         fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=q2["Month"], y=q2["Rev_K"], mode="lines+markers",
+        fig.add_trace(go.Scatter(x=q2["Month"], y=q2["Rev_K"], mode="lines+markers",
             line=dict(color="#06b6d4", width=3, shape="spline"),
-            marker=dict(size=7, color="#ffffff", line=dict(width=2, color="#06b6d4")),
-            fill="tozeroy", fillcolor="rgba(6,182,212,0.09)",
-            hovertemplate="Revenue: <b>₹%{y:.0f}K</b><extra></extra>",
-        ))
+            marker=dict(size=8, color="#ffffff", line=dict(width=2, color="#06b6d4")),
+            fill="tozeroy", fillcolor="rgba(6,182,212,0.2)",
+            hovertemplate="Revenue: <b>₹%{y:.0f}K</b><extra></extra>"))
         show(fig, 300, "Monthly Revenue Trend (₹K)", "📈", "x unified")
 
     c3, c4 = st.columns(2)
@@ -413,13 +400,13 @@ elif page == "cost":
             marker_line_width=0, marker_cornerradius=8,
             hovertemplate="<b>%{x}</b><br>Avg Freight: <b>₹%{y:,.0f}</b><extra></extra>")
         fig.update_layout(showlegend=False)
-        show(fig, 290, "Avg Freight by Shipping Mode", "🚢", "x unified")
+        show(fig, 290, "Avg Freight by Shipping Mode", "🚢", "closest")
 
     with c4:
         pt = pd.read_sql("SELECT Payment_Terms, COUNT(*) AS Orders FROM sc GROUP BY Payment_Terms", con)
         fig = px.pie(pt, values="Orders", names="Payment_Terms", hole=0.5, color_discrete_sequence=PAL)
         fig.update_traces(textfont_size=11, textinfo="percent+label",
-            marker=dict(line=dict(color="#030312", width=2.5)),
+            marker=dict(line=dict(color="#030312",width=2.5)),
             hovertemplate="<b>%{label}</b><br>Orders: <b>%{value}</b><br>Share: <b>%{percent}</b><extra></extra>")
         show(fig, 290, "Orders by Payment Terms", "💳", "closest")
 
@@ -439,11 +426,11 @@ elif page == "supplier":
     top_sup=d.groupby("Supplier_Name")["Final_Cost_INR"].sum().idxmax()[:14] if n else "N/A"
 
     st.markdown(kpi_row([
-        kpi("🏢","SUPPLIERS",   f"{n_sup}",                       "active suppliers",  "indigo"),
-        kpi("⭐","AVG QUALITY", f"{avg_q:.2f}" if avg_q else "–", "rating / 5.0",      "yellow"),
-        kpi("🔴","LOW QUALITY", f"{low_q}",                       "ratings below 3.0", "red"),
-        kpi("⏱️","AVG LEAD",    f"{avg_lt:.1f}d",                  "order → delivery",  "cyan"),
-        kpi("🥇","TOP SUPPLIER",top_sup,                           "by total revenue",  "green"),
+        kpi("🏢","SUPPLIERS",f"{n_sup}","active suppliers","indigo"),
+        kpi("⭐","AVG QUALITY",f"{avg_q:.2f}" if avg_q else "–","rating / 5.0","yellow"),
+        kpi("🔴","LOW QUALITY",f"{low_q}","ratings below 3.0","red"),
+        kpi("⏱️","AVG LEAD",f"{avg_lt:.1f}d","order → delivery","cyan"),
+        kpi("🥇","TOP SUPPLIER",top_sup,"by total revenue","green"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
@@ -456,7 +443,7 @@ elif page == "supplier":
             marker_line_width=0, marker_cornerradius=6,
             hovertemplate="<b>%{y}</b><br>Revenue: <b>₹%{x:.0f}K</b><extra></extra>")
         fig.update_coloraxes(showscale=False)
-        show(fig, 310, "Top 8 Suppliers by Revenue", "🥇", "y unified")
+        show(fig, 310, "Top 8 Suppliers by Revenue", "🥇", "closest")
 
     with c2:
         q2 = pd.read_sql("""SELECT Supplier_Name, ROUND(AVG(Quality_Rating),2) AS AvgQ
@@ -468,14 +455,14 @@ elif page == "supplier":
                 marker_line_width=0, marker_cornerradius=6,
                 hovertemplate="<b>%{y}</b><br>Quality: <b>%{x:.2f} / 5.0</b><extra></extra>")
             fig.update_coloraxes(showscale=False)
-            show(fig, 310, "Quality Rating by Supplier", "⭐", "y unified")
+            show(fig, 310, "Quality Rating by Supplier", "⭐", "closest")
 
     c3, c4 = st.columns(2)
     with c3:
         q3 = pd.read_sql("SELECT Supplier_City, COUNT(*) AS Orders FROM sc GROUP BY Supplier_City ORDER BY Orders DESC", con)
         fig = px.pie(q3, values="Orders", names="Supplier_City", hole=0.48, color_discrete_sequence=PAL)
         fig.update_traces(textfont_size=11, textinfo="percent+label",
-            marker=dict(line=dict(color="#030312", width=2.5)),
+            marker=dict(line=dict(color="#030312",width=2.5)),
             hovertemplate="<b>%{label}</b><br>Orders: <b>%{value}</b><br>Share: <b>%{percent}</b><extra></extra>")
         show(fig, 290, "Orders by Supplier City", "📍", "closest")
 
@@ -489,15 +476,15 @@ elif page == "supplier":
             hovertemplate="<b>%{x}</b><br>Avg Lead: <b>%{y:.1f} days</b><extra></extra>")
         fig.update_coloraxes(showscale=False)
         fig.update_xaxes(tickangle=20, tickfont=dict(size=9))
-        show(fig, 290, "Avg Lead Time by Supplier", "⏱️", "x unified")
+        show(fig, 290, "Avg Lead Time by Supplier", "⏱️", "closest")
 
 # ═══ WAREHOUSE ═══
 elif page == "warehouse":
     page_header("Warehouse Operations")
     fbar_open()
     c1, c2, c3 = st.columns(3)
-    with c1: sel_wh   = pills("Warehouse", df["Warehouse"].unique(),     "wh_wh")
-    with c2: sel_cat  = pills("Category",  df["Category"].unique(),      "wh_cat")
+    with c1: sel_wh   = pills("Warehouse", df["Warehouse"].unique(), "wh_wh")
+    with c2: sel_cat  = pills("Category",  df["Category"].unique(),  "wh_cat")
     with c3: sel_ship = pills("Shipping",  df["Shipping_Mode"].unique(), "wh_ship")
     fbar_close()
 
@@ -510,11 +497,11 @@ elif page == "warehouse":
     avg_qty=d["Quantity"].mean() if n else 0
 
     st.markdown(kpi_row([
-        kpi("🏭","WAREHOUSES",   f"{n_wh}",       "active locations", "indigo"),
-        kpi("📦","TOTAL ORDERS", f"{n:,}",         "filtered orders",  "cyan"),
-        kpi("🏆","MOST ACTIVE",  most_active,      "by order count",   "green"),
-        kpi("🚨","MOST DELAYS",  most_delay,       "by delay count",   "red"),
-        kpi("📊","AVG QTY/ORDER",f"{avg_qty:.1f}", "units per order",  "yellow"),
+        kpi("🏭","WAREHOUSES",f"{n_wh}","active locations","indigo"),
+        kpi("📦","TOTAL ORDERS",f"{n:,}","filtered orders","cyan"),
+        kpi("🏆","MOST ACTIVE",most_active,"by order count","green"),
+        kpi("🚨","MOST DELAYS",most_delay,"by delay count","red"),
+        kpi("📊","AVG QTY/ORDER",f"{avg_qty:.1f}","units per order","yellow"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
@@ -535,11 +522,10 @@ elif page == "warehouse":
 
     with c2:
         q2 = pd.read_sql("""SELECT REPLACE(Warehouse,'WH-','') AS WH,
-            ROUND(SUM(Final_Cost_INR)/1000,1) AS Rev_K
-            FROM sc GROUP BY Warehouse ORDER BY Rev_K DESC""", con)
+            ROUND(SUM(Final_Cost_INR)/1000,1) AS Rev_K FROM sc GROUP BY Warehouse ORDER BY Rev_K DESC""", con)
         fig = px.pie(q2, values="Rev_K", names="WH", hole=0.5, color_discrete_sequence=PAL)
         fig.update_traces(textfont_size=11, textinfo="percent+label",
-            marker=dict(line=dict(color="#030312", width=2.5)),
+            marker=dict(line=dict(color="#030312",width=2.5)),
             hovertemplate="<b>WH-%{label}</b><br>Revenue: <b>₹%{value:.0f}K</b><br>Share: <b>%{percent}</b><extra></extra>")
         show(fig, 290, "Revenue by Warehouse (₹K)", "💰", "closest")
 
