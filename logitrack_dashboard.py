@@ -42,24 +42,25 @@ button[kind="header"]{display:none!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button:hover{
   background:rgba(129,140,248,0.1)!important;color:#a5b4fc!important;}
 
-/* ── PILLS – compact ── */
-[data-testid="stPills"]{gap:4px!important;flex-wrap:wrap!important;}
+/* ── PILLS – very compact ── */
+[data-testid="stPills"]{gap:3px!important;flex-wrap:wrap!important;row-gap:3px!important;}
 [data-testid="stPills"] span[role="checkbox"],
 [data-testid="stPills"] span[role="radio"]{
   background:transparent!important;border:1px solid rgba(129,140,248,0.18)!important;
-  color:#64748b!important;font-size:10px!important;font-weight:500!important;
-  padding:3px 9px!important;border-radius:20px!important;cursor:pointer!important;
-  transition:all 0.12s!important;line-height:1.4!important;}
+  color:#64748b!important;font-size:9px!important;font-weight:500!important;
+  padding:2px 7px!important;border-radius:20px!important;cursor:pointer!important;
+  transition:all 0.12s!important;line-height:1.3!important;}
 [data-testid="stPills"] span[role="checkbox"][aria-checked="true"],
 [data-testid="stPills"] span[role="radio"][aria-checked="true"],
 [data-testid="stPills"] span[aria-selected="true"]{
   background:rgba(129,140,248,0.15)!important;
   border-color:rgba(129,140,248,0.65)!important;
   color:#a5b4fc!important;font-weight:700!important;
-  box-shadow:0 0 10px rgba(129,140,248,0.2)!important;}
+  box-shadow:0 0 8px rgba(129,140,248,0.2)!important;}
 [data-testid="stPills"] label{
-  font-size:8px!important;color:#2d3748!important;
-  text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;}
+  font-size:7px!important;color:#2d3748!important;
+  text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;
+  margin-bottom:2px!important;}
 
 /* ── CHART CARDS – glow + pulse animation ── */
 @keyframes chart-glow{
@@ -96,13 +97,12 @@ hr{border-color:rgba(129,140,248,0.06)!important;margin:12px 0!important;}
 def load_data():
     df = pd.read_csv("supply_chain_2024_25.csv")
     df["Order_Date"] = pd.to_datetime(df["Order_Date"])
-    df["MonthSort"]  = df["Order_Date"].dt.strftime("%Y-%m")   # for SQL ORDER BY
-    df["Month"]      = df["Order_Date"].dt.strftime("%b '%y")  # for display
+    df["MonthSort"]  = df["Order_Date"].dt.strftime("%Y-%m")
+    df["Month"]      = df["Order_Date"].dt.strftime("%b '%y")
     return df
 
 df = load_data()
 
-# ─── Palette & Constants ─────────────────────────────────────────────────────
 PAL = ["#818cf8","#06b6d4","#10b981","#f59e0b","#ec4899","#f43f5e","#a78bfa","#22d3ee"]
 STATUS_CLR = {
     "Delivered":"#10b981","In Transit":"#3b82f6",
@@ -113,7 +113,6 @@ GLOW = {
     "red":"#f43f5e","yellow":"#f59e0b","gray":"#6b7280","pink":"#ec4899"
 }
 
-# ─── Chart Base Layout ────────────────────────────────────────────────────────
 def chart_layout(height=300, title="", icon="", hovermode="closest"):
     return dict(
         template="plotly_dark",
@@ -121,7 +120,7 @@ def chart_layout(height=300, title="", icon="", hovermode="closest"):
         plot_bgcolor="rgba(0,0,0,0)",
         height=height,
         font=dict(color="#64748b", family="Inter,-apple-system,sans-serif", size=11),
-        margin=dict(l=14, r=14, t=48, b=14),
+        margin=dict(l=14, r=14, t=48, b=55),
         title=dict(
             text=f"<b>{icon}  {title}</b>" if title else "",
             x=0.01, y=0.97,
@@ -129,21 +128,32 @@ def chart_layout(height=300, title="", icon="", hovermode="closest"):
             pad=dict(l=0, t=0)
         ),
         legend=dict(
-            font=dict(color="#64748b", size=10),
-            bgcolor="rgba(0,0,0,0)",
+            font=dict(color="#94a3b8", size=10),
+            bgcolor="rgba(6,6,20,0.75)",
+            bordercolor="rgba(129,140,248,0.15)",
+            borderwidth=1,
             orientation="h",
-            yanchor="bottom", y=-0.22, xanchor="center", x=0.5
+            yanchor="top", y=0.99,
+            xanchor="right", x=0.99,
         ),
         xaxis=dict(
             gridcolor="rgba(255,255,255,0.04)",
             tickfont=dict(color="#475569", size=9),
             showline=False, zeroline=False,
             tickangle=0,
+            title_text="",
+            showspikes=True,
+            spikemode="across",
+            spikesnap="cursor",
+            spikecolor="rgba(255,255,255,0.85)",
+            spikedash="solid",
+            spikethickness=1.5,
         ),
         yaxis=dict(
             gridcolor="rgba(255,255,255,0.04)",
             tickfont=dict(color="#475569", size=9),
-            showline=False, zeroline=False
+            showline=False, zeroline=False,
+            title_text="",
         ),
         hoverlabel=dict(
             bgcolor="#0a0a1f",
@@ -160,7 +170,6 @@ def show(fig, height=300, title="", icon="", hovermode="closest"):
     fig.update_layout(**chart_layout(height, title, icon, hovermode))
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-# ─── KPI Card – bigger values ────────────────────────────────────────────────
 def kpi(icon, label, value, sub, color):
     g = GLOW.get(color, "#818cf8")
     return f"""
@@ -177,14 +186,13 @@ def kpi(icon, label, value, sub, color):
     <div style="background:{g}20;border:1px solid {g}30;border-radius:9px;padding:6px 7px;
       font-size:14px;line-height:1;box-shadow:0 0 14px {g}35;margin-left:8px;flex-shrink:0;">{icon}</div>
   </div>
-  <div style="font-size:34px;font-weight:900;color:#f8fafc;line-height:1;letter-spacing:-0.03em;margin-bottom:6px;">{value}</div>
+  <div style="font-size:38px;font-weight:900;color:#f8fafc;line-height:1;letter-spacing:-0.03em;margin-bottom:6px;">{value}</div>
   <div style="font-size:11px;color:#475569;font-weight:500;">{sub}</div>
 </div>"""
 
 def kpi_row(cards):
     return '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">' + ''.join(cards) + '</div>'
 
-# ─── Page Header ─────────────────────────────────────────────────────────────
 def page_header(title):
     st.markdown(f"""
 <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(129,140,248,0.06);">
@@ -197,7 +205,6 @@ def page_header(title):
   </div>
 </div>""", unsafe_allow_html=True)
 
-# ─── Filter Bar ───────────────────────────────────────────────────────────────
 def fbar_open():
     st.markdown("""
 <div style="background:rgba(129,140,248,0.03);border:1px solid rgba(129,140,248,0.1);
@@ -211,7 +218,6 @@ def fbar_open():
 def fbar_close():
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ─── Pills helper ─────────────────────────────────────────────────────────────
 def pills(label, options, key):
     opts = ["All"] + [str(o) for o in sorted(options)]
     sel = st.pills(label, options=opts, selection_mode="multi", default=["All"], key=key)
@@ -219,7 +225,6 @@ def pills(label, options, key):
         return list(options)
     return sel
 
-# ─── 3D Cube SVG ─────────────────────────────────────────────────────────────
 CUBE = """<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
   <defs>
     <linearGradient id="gt" x1="0" y1="0" x2="1" y2="1">
@@ -239,7 +244,6 @@ CUBE = """<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64"
   <polyline points="7,19 57,19" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
 </svg>"""
 
-# ─── Navigation ───────────────────────────────────────────────────────────────
 if "page" not in st.session_state:
     st.session_state.page = "overview"
 
@@ -338,13 +342,12 @@ if page == "overview":
             x=mdf["Month"], y=mdf["Orders"],
             mode="lines+markers",
             line=dict(color="#818cf8", width=2.5, shape="spline"),
-            marker=dict(size=5, color="#818cf8",
-                        line=dict(width=2, color="#0a0a1f"), symbol="circle"),
-            fill="tozeroy",
-            fillcolor="rgba(129,140,248,0.16)",
+            marker=dict(size=5, color="#818cf8", line=dict(width=2, color="#0a0a1f"), symbol="circle"),
+            fill="tozeroy", fillcolor="rgba(129,140,248,0.16)",
             name="Orders",
             hovertemplate="<b>%{x}</b><br>Orders: <b>%{y}</b><extra></extra>",
         ))
+        fig.update_xaxes(tickangle=45, tickfont=dict(size=9))
         show(fig, height=300, title="Monthly Orders Trend", icon="📅", hovermode="x unified")
 
     with c2:
@@ -369,7 +372,7 @@ if page == "overview":
             hovertemplate="<b>%{x}</b><br>Revenue: <b>₹%{y:.0f}K</b><extra></extra>",
         )
         fig.update_layout(showlegend=False)
-        fig.update_xaxes(tickangle=30, tickfont=dict(size=9))
+        fig.update_xaxes(tickangle=30, tickfont=dict(size=9), title_text="")
         show(fig, height=290, title="Revenue by Category (₹K)", icon="💰")
 
     with c4:
@@ -384,6 +387,7 @@ if page == "overview":
             fill="tozeroy", fillcolor="rgba(6,182,212,0.15)",
             hovertemplate="<b>%{x}</b><br>Revenue: <b>₹%{y:.0f}K</b><extra></extra>",
         ))
+        fig.update_xaxes(tickangle=45, tickfont=dict(size=9))
         show(fig, height=290, title="Monthly Revenue (₹K)", icon="📈", hovermode="x unified")
 
 
@@ -436,7 +440,7 @@ elif page == "delivery":
             hovertemplate="<b>%{x}</b><br>Delay Rate: <b>%{y:.1f}%</b><extra></extra>",
         )
         fig.update_layout(showlegend=False)
-        fig.update_xaxes(tickangle=20, tickfont=dict(size=9))
+        fig.update_xaxes(tickangle=20, tickfont=dict(size=9), title_text="")
         show(fig, height=290, title="Delay Rate by Shipping Mode", icon="📦")
 
     with c2:
@@ -472,7 +476,7 @@ elif page == "delivery":
             hovertemplate="<b>%{x}</b><br>Avg Lead: <b>%{y:.1f} days</b><extra></extra>",
         )
         fig.update_layout(showlegend=False)
-        fig.update_xaxes(tickangle=30, tickfont=dict(size=9))
+        fig.update_xaxes(tickangle=30, tickfont=dict(size=9), title_text="")
         show(fig, height=290, title="Avg Lead Time by Category", icon="⏱️")
 
     with c4:
@@ -483,7 +487,7 @@ elif page == "delivery":
             marker_line_width=0,
             hovertemplate="<b>%{x}</b> – %{fullData.name}<br>Count: <b>%{y}</b><extra></extra>",
         )
-        fig.update_xaxes(tickangle=30, tickfont=dict(size=9))
+        fig.update_xaxes(tickangle=30, tickfont=dict(size=9), title_text="")
         show(fig, height=290, title="Order Status by Category", icon="📊")
 
 
@@ -537,7 +541,7 @@ elif page == "cost":
             hovertemplate="<b>%{x}</b><br>Freight: <b>₹%{y:.0f}K</b><extra></extra>",
         ))
         fig.update_layout(**chart_layout(300, "Revenue vs Freight by Category (₹K)", "💰"), barmode="group")
-        fig.update_xaxes(tickangle=30, tickfont=dict(size=9))
+        fig.update_xaxes(tickangle=30, tickfont=dict(size=9), title_text="")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     with c2:
@@ -552,6 +556,7 @@ elif page == "cost":
             fill="tozeroy", fillcolor="rgba(6,182,212,0.15)",
             hovertemplate="<b>%{x}</b><br>Revenue: <b>₹%{y:.0f}K</b><extra></extra>",
         ))
+        fig.update_xaxes(tickangle=45, tickfont=dict(size=9))
         show(fig, height=300, title="Monthly Revenue Trend (₹K)", icon="📈", hovermode="x unified")
 
     c3, c4 = st.columns(2)
@@ -565,7 +570,7 @@ elif page == "cost":
             hovertemplate="<b>%{x}</b><br>Avg Freight: <b>₹%{y:,.0f}</b><extra></extra>",
         )
         fig.update_layout(showlegend=False)
-        fig.update_xaxes(tickangle=20, tickfont=dict(size=9))
+        fig.update_xaxes(tickangle=20, tickfont=dict(size=9), title_text="")
         show(fig, height=290, title="Avg Freight by Shipping Mode", icon="🚢")
 
     with c4:
@@ -627,6 +632,7 @@ elif page == "supplier":
             hovertemplate="<b>%{y}</b><br>Revenue: <b>₹%{x:.0f}K</b><extra></extra>",
         )
         fig.update_coloraxes(showscale=False)
+        fig.update_yaxes(title_text="")
         show(fig, height=310, title="Top 8 Suppliers by Revenue", icon="🥇")
 
     with c2:
@@ -643,6 +649,7 @@ elif page == "supplier":
                 hovertemplate="<b>%{y}</b><br>Quality: <b>%{x:.2f} / 5.0</b><extra></extra>",
             )
             fig.update_coloraxes(showscale=False)
+            fig.update_yaxes(title_text="")
             show(fig, height=310, title="Quality Rating by Supplier", icon="⭐")
 
     c3, c4 = st.columns(2)
@@ -669,12 +676,12 @@ elif page == "supplier":
             hovertemplate="<b>%{x}</b><br>Avg Lead: <b>%{y:.1f} days</b><extra></extra>",
         )
         fig.update_coloraxes(showscale=False)
-        fig.update_xaxes(tickangle=30, tickfont=dict(size=9))
+        fig.update_xaxes(tickangle=45, tickfont=dict(size=9), title_text="")
         show(fig, height=290, title="Avg Lead Time by Supplier", icon="⏱️")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# WAREHOUSE  –  exactly 3 charts: 1 wide bar + 2 in columns
+# WAREHOUSE
 # ═══════════════════════════════════════════════════════════════════════════════
 elif page == "warehouse":
     page_header("Warehouse Operations")
@@ -708,7 +715,6 @@ elif page == "warehouse":
         kpi("📊", "AVG QTY/ORDER", f"{avg_qty:.1f}",   "units per order",   "yellow"),
     ]), unsafe_allow_html=True)
 
-    # Chart 1 – WIDE full-width bar: Orders vs Delays by Warehouse
     q = pd.read_sql("""SELECT REPLACE(Warehouse,'WH-','') AS WH,
         COUNT(*) AS Orders,
         SUM(CASE WHEN Order_Status='Delayed' THEN 1 ELSE 0 END) AS Delayed
@@ -728,10 +734,9 @@ elif page == "warehouse":
         **chart_layout(300, "Orders vs Delays by Warehouse", "🏭", "closest"),
         barmode="group"
     )
-    fig.update_xaxes(tickangle=30, tickfont=dict(size=10))
+    fig.update_xaxes(tickangle=30, tickfont=dict(size=10), title_text="")
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-    # Charts 2 & 3 – side by side
     c1, c2 = st.columns(2)
     with c1:
         q2 = pd.read_sql("""SELECT REPLACE(Warehouse,'WH-','') AS WH,
@@ -753,11 +758,10 @@ elif page == "warehouse":
             marker_line_width=0,
             hovertemplate="<b>WH-%{x}</b> – %{fullData.name}<br>Count: <b>%{y}</b><extra></extra>",
         )
-        fig.update_xaxes(tickangle=30, tickfont=dict(size=10))
+        fig.update_xaxes(tickangle=30, tickfont=dict(size=10), title_text="")
         show(fig, height=300, title="Category Mix by Warehouse", icon="📁")
 
 
-# ─── Footer ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <div style="text-align:center;color:#0f172a;font-size:10px;margin-top:28px;
   padding-top:12px;border-top:1px solid rgba(129,140,248,0.05);">
