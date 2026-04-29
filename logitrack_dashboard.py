@@ -31,7 +31,7 @@ st.markdown("""
 [data-testid="stPills"]{gap:5px!important;flex-wrap:wrap!important;}
 [data-testid="stPills"] span[role="checkbox"],
 [data-testid="stPills"] span[role="radio"]{
-  background:transparent!important;border:1px solid rgba(129,140,248,0.2)!important;
+  background:transparent!important;border:1px solid rgba(129,140,248,0.22)!important;
   color:#64748b!important;font-size:11px!important;font-weight:500!important;
   padding:4px 13px!important;border-radius:20px!important;cursor:pointer!important;
   transition:all 0.12s!important;line-height:1.5!important;}
@@ -39,18 +39,18 @@ st.markdown("""
 [data-testid="stPills"] span[role="radio"][aria-checked="true"],
 [data-testid="stPills"] span[aria-selected="true"]{
   background:rgba(129,140,248,0.15)!important;
-  border-color:rgba(129,140,248,0.65)!important;
+  border-color:rgba(129,140,248,0.7)!important;
   color:#a5b4fc!important;font-weight:700!important;
-  box-shadow:0 0 12px rgba(129,140,248,0.25)!important;}
+  box-shadow:0 0 10px rgba(129,140,248,0.3)!important;}
 [data-testid="stPills"] label{
-  font-size:9px!important;color:#2d3748!important;
+  font-size:9px!important;color:#334155!important;
   text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;}
-[data-testid="stPlotlyChart"]>div{
-  background:linear-gradient(145deg,rgba(255,255,255,0.025),rgba(255,255,255,0.008))!important;
-  border:1px solid rgba(129,140,248,0.12)!important;
+[data-testid="stPlotlyChart"]{
+  border:1px solid rgba(129,140,248,0.15)!important;
   border-radius:16px!important;
-  box-shadow:0 0 30px rgba(129,140,248,0.08),0 0 60px rgba(129,140,248,0.04),0 8px 32px rgba(0,0,0,0.6)!important;
-  overflow:hidden!important;padding:2px!important;}
+  box-shadow:0 0 28px rgba(129,140,248,0.1),0 0 60px rgba(129,140,248,0.04),0 6px 24px rgba(0,0,0,0.6)!important;
+  overflow:hidden!important;
+  background:rgba(8,8,22,0.95)!important;}
 [data-testid="stSlider"] [role="slider"]{background:#818cf8!important;}
 hr{border-color:rgba(129,140,248,0.06)!important;margin:14px 0!important;}
 ::-webkit-scrollbar{width:4px;height:4px;}
@@ -69,14 +69,8 @@ def load_data():
 df = load_data()
 
 PAL = ["#818cf8","#06b6d4","#10b981","#f59e0b","#ec4899","#f43f5e","#a78bfa","#22d3ee"]
-STATUS_CLR = {
-    "Delivered":"#10b981","In Transit":"#3b82f6",
-    "Delayed":"#f43f5e","Cancelled":"#6b7280","Pending":"#f59e0b"
-}
-GLOW = {
-    "indigo":"#818cf8","cyan":"#06b6d4","green":"#10b981",
-    "red":"#f43f5e","yellow":"#f59e0b","gray":"#6b7280","pink":"#ec4899"
-}
+STATUS_CLR = {"Delivered":"#10b981","In Transit":"#3b82f6","Delayed":"#f43f5e","Cancelled":"#6b7280","Pending":"#f59e0b"}
+GLOW = {"indigo":"#818cf8","cyan":"#06b6d4","green":"#10b981","red":"#f43f5e","yellow":"#f59e0b","gray":"#6b7280","pink":"#ec4899"}
 
 def chart_layout(height=300, title="", icon="", hovermode="closest"):
     return dict(
@@ -90,30 +84,16 @@ def chart_layout(height=300, title="", icon="", hovermode="closest"):
             text=f"<b>{icon}  {title}</b>" if title else "",
             x=0.01, y=0.97,
             font=dict(color="#c7d2fe", size=13, family="Inter"),
-            pad=dict(l=0, t=0)
         ),
-        legend=dict(
-            font=dict(color="#64748b", size=10),
-            bgcolor="rgba(0,0,0,0)",
-            orientation="h",
-            yanchor="bottom", y=-0.18, xanchor="center", x=0.5
-        ),
-        xaxis=dict(
-            gridcolor="rgba(255,255,255,0.04)",
-            tickfont=dict(color="#475569", size=10),
-            showline=False, zeroline=False
-        ),
-        yaxis=dict(
-            gridcolor="rgba(255,255,255,0.04)",
-            tickfont=dict(color="#475569", size=10),
-            showline=False, zeroline=False
-        ),
+        legend=dict(font=dict(color="#64748b",size=10),bgcolor="rgba(0,0,0,0)",
+            orientation="h",yanchor="bottom",y=-0.18,xanchor="center",x=0.5),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.04)",tickfont=dict(color="#475569",size=10),showline=False,zeroline=False),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.04)",tickfont=dict(color="#475569",size=10),showline=False,zeroline=False),
         hoverlabel=dict(
             bgcolor="#0a0a1f",
-            bordercolor="rgba(129,140,248,0.5)",
-            font=dict(color="#e2e8f0", size=12, family="Inter"),
-            align="left",
-            namelength=-1,
+            bordercolor="rgba(129,140,248,0.55)",
+            font=dict(color="#e2e8f0",size=12,family="Inter"),
+            align="left", namelength=-1,
         ),
         hovermode=hovermode,
     )
@@ -135,36 +115,33 @@ def kpi(icon, label, value, sub, color):
     background:radial-gradient(circle,{g}18,transparent 68%);pointer-events:none;"></div>
   <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
     <span style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:0.13em;font-weight:700;line-height:1.4;">{label}</span>
-    <div style="background:{g}20;border:1px solid {g}30;border-radius:9px;padding:6px 7px;
-      font-size:14px;line-height:1;box-shadow:0 0 14px {g}35;margin-left:8px;flex-shrink:0;">{icon}</div>
+    <div style="background:{g}20;border:1px solid {g}35;border-radius:9px;padding:6px 7px;
+      font-size:14px;line-height:1;box-shadow:0 0 14px {g}40;margin-left:8px;flex-shrink:0;">{icon}</div>
   </div>
   <div style="font-size:30px;font-weight:900;color:#f8fafc;line-height:1;letter-spacing:-0.025em;margin-bottom:6px;">{value}</div>
   <div style="font-size:11px;color:#475569;font-weight:500;">{sub}</div>
 </div>"""
 
 def kpi_row(cards):
-    return '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">' + ''.join(cards) + '</div>'
+    return '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">'+''.join(cards)+'</div>'
 
 def page_header(title):
+    # FIXED: plain white text - no webkit gradient (was invisible on deploy)
     st.markdown(f"""
-<div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(129,140,248,0.06);">
-  <div style="display:flex;align-items:center;gap:11px;">
-    <div style="width:5px;height:30px;background:linear-gradient(180deg,#a5b4fc,#4f46e5);border-radius:3px;flex-shrink:0;
-      box-shadow:0 0 12px rgba(129,140,248,0.6);"></div>
-    <div style="font-size:25px;font-weight:900;letter-spacing:-0.025em;
-      background:linear-gradient(135deg,#f1f5f9 0%,#a5b4fc 60%,#818cf8 100%);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2;">
-      {title}
-    </div>
+<div style="margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(129,140,248,0.08);">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="width:6px;height:32px;background:linear-gradient(180deg,#a5b4fc,#4f46e5);
+      border-radius:4px;flex-shrink:0;box-shadow:0 0 16px rgba(129,140,248,0.8);"></div>
+    <span style="font-size:26px;font-weight:900;color:#e2e8f0;letter-spacing:-0.025em;line-height:1.2;">{title}</span>
   </div>
 </div>""", unsafe_allow_html=True)
 
 def fbar_open():
     st.markdown("""
 <div style="background:rgba(129,140,248,0.03);border:1px solid rgba(129,140,248,0.1);
-  border-radius:14px;padding:14px 18px 10px;margin-bottom:20px;">
-  <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
-    <span style="font-size:11px;line-height:1;">⚡</span>
+  border-radius:14px;padding:12px 16px 8px;margin-bottom:18px;">
+  <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;">
+    <span style="font-size:11px;">⚡</span>
     <span style="font-size:9px;color:#818cf8;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;">Filters</span>
     <div style="flex:1;height:1px;background:rgba(129,140,248,0.12);margin-left:4px;"></div>
   </div>""", unsafe_allow_html=True)
@@ -181,15 +158,9 @@ def pills(label, options, key):
 
 CUBE = """<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
   <defs>
-    <linearGradient id="gt" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#c7d2fe"/><stop offset="100%" stop-color="#818cf8"/>
-    </linearGradient>
-    <linearGradient id="gl" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#312e81"/>
-    </linearGradient>
-    <linearGradient id="gr" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0369a1"/>
-    </linearGradient>
+    <linearGradient id="gt" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c7d2fe"/><stop offset="100%" stop-color="#818cf8"/></linearGradient>
+    <linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#312e81"/></linearGradient>
+    <linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0369a1"/></linearGradient>
   </defs>
   <polygon points="32,5 57,19 32,33 7,19" fill="url(#gt)" opacity="0.97"/>
   <polygon points="7,19 32,33 32,58 7,44" fill="url(#gl)"/>
@@ -202,41 +173,30 @@ if "page" not in st.session_state:
     st.session_state.page = "overview"
 
 PAGES = [
-    ("📊", "Overview",       "overview"),
-    ("🚚", "Delivery",       "delivery"),
-    ("💰", "Cost & Revenue", "cost"),
-    ("🏆", "Suppliers",      "supplier"),
-    ("🏭", "Warehouse",      "warehouse"),
+    ("📊","Overview","overview"),("🚚","Delivery","delivery"),
+    ("💰","Cost & Revenue","cost"),("🏆","Suppliers","supplier"),("🏭","Warehouse","warehouse"),
 ]
 
 with st.sidebar:
     st.markdown(f"""
-<div style="text-align:center;padding-bottom:22px;margin-bottom:20px;
-  border-bottom:1px solid rgba(129,140,248,0.07);">
+<div style="text-align:center;padding-bottom:22px;margin-bottom:20px;border-bottom:1px solid rgba(129,140,248,0.07);">
   <div style="width:64px;height:64px;margin:0 auto 12px;
-    filter:drop-shadow(0 0 18px rgba(99,102,241,0.9)) drop-shadow(0 0 36px rgba(99,102,241,0.5));">
-    {CUBE}
-  </div>
-  <div style="font-weight:900;font-size:18px;letter-spacing:-0.03em;
-    background:linear-gradient(120deg,#c7d2fe 0%,#a5f3fc 100%);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;">LogiTrack</div>
-  <div style="font-size:9px;color:#4f46e5;font-weight:800;letter-spacing:0.22em;
-    text-transform:uppercase;margin-top:3px;">PRO</div>
+    filter:drop-shadow(0 0 18px rgba(99,102,241,0.9)) drop-shadow(0 0 36px rgba(99,102,241,0.5));">{CUBE}</div>
+  <div style="font-weight:900;font-size:18px;letter-spacing:-0.03em;color:#c7d2fe;">LogiTrack</div>
+  <div style="font-size:9px;color:#4f46e5;font-weight:800;letter-spacing:0.22em;text-transform:uppercase;margin-top:3px;">PRO</div>
 </div>
-<div style="font-size:8px;color:#1e293b;text-transform:uppercase;letter-spacing:0.15em;
-  font-weight:800;margin-bottom:8px;padding-left:4px;">Navigation</div>
+<div style="font-size:8px;color:#1e293b;text-transform:uppercase;letter-spacing:0.15em;font-weight:800;margin-bottom:8px;padding-left:4px;">Navigation</div>
 """, unsafe_allow_html=True)
 
     for icon, label, key in PAGES:
         if st.session_state.page == key:
             st.markdown(f"""
-<div style="display:flex;align-items:center;gap:9px;padding:10px 13px;
-  border-radius:12px;margin-bottom:3px;
+<div style="display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:12px;margin-bottom:3px;
   background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);
   box-shadow:0 4px 24px rgba(99,102,241,0.5),inset 0 1px 0 rgba(255,255,255,0.15);">
   <span style="font-size:15px;line-height:1;">{icon}</span>
   <span style="color:#fff;font-weight:700;font-size:13px;flex:1;">{label}</span>
-  <span style="color:rgba(255,255,255,0.45);font-size:16px;font-weight:300;">›</span>
+  <span style="color:rgba(255,255,255,0.45);font-size:16px;">›</span>
 </div>""", unsafe_allow_html=True)
         else:
             if st.button(f"{icon}  {label}", key=f"nav_{key}", use_container_width=True):
@@ -245,7 +205,7 @@ with st.sidebar:
 
     st.markdown("""<hr>
 <div style="text-align:center;padding:6px 0 2px;">
-  <div style="font-size:10px;color:#1e293b;font-weight:500;">Supply Chain Analytics</div>
+  <div style="font-size:10px;color:#1e293b;">Supply Chain Analytics</div>
   <div style="font-size:9px;color:#0f172a;margin-top:2px;">Jan 2024 – Apr 2025</div>
 </div>""", unsafe_allow_html=True)
 
@@ -261,12 +221,10 @@ if page == "overview":
     fbar_close()
 
     d = df[df["Category"].isin(sel_cat) & df["Warehouse"].isin(sel_wh)]
-    con = sqlite3.connect(":memory:")
-    d.to_sql("sc", con, index=False, if_exists="replace")
-
-    n = len(d); rev = d["Final_Cost_INR"].sum(); avg_lt = d["Lead_Time_Days"].mean() if n else 0
-    delayed = (d["Order_Status"]=="Delayed").sum(); dlvrd = (d["Order_Status"]=="Delivered").sum()
-    rated = d["Quality_Rating"].dropna(); avg_q = rated.mean() if len(rated) else 0
+    con = sqlite3.connect(":memory:"); d.to_sql("sc", con, index=False, if_exists="replace")
+    n=len(d); rev=d["Final_Cost_INR"].sum(); avg_lt=d["Lead_Time_Days"].mean() if n else 0
+    delayed=(d["Order_Status"]=="Delayed").sum(); dlvrd=(d["Order_Status"]=="Delivered").sum()
+    rated=d["Quality_Rating"].dropna(); avg_q=rated.mean() if len(rated) else 0
 
     st.markdown(kpi_row([
         kpi("📦","TOTAL ORDERS",  f"{n:,}",                  "filtered records",                              "indigo"),
@@ -284,7 +242,7 @@ if page == "overview":
         fig.add_trace(go.Scatter(x=mdf["Month"], y=mdf["Orders"], mode="lines+markers",
             line=dict(color="#818cf8", width=2.5, shape="spline"),
             marker=dict(size=6, color="#818cf8", line=dict(width=2, color="#0a0a1f")),
-            fill="tozeroy", fillcolor="rgba(129,140,248,0.10)", name="Orders",
+            fill="tozeroy", fillcolor="rgba(129,140,248,0.12)", name="Orders",
             hovertemplate="<b>%{x}</b><br>Orders: <b>%{y}</b><extra></extra>"))
         show(fig, 300, "Monthly Orders Trend", "📅", "x unified")
     with c2:
@@ -320,20 +278,20 @@ elif page == "delivery":
     page_header("Delivery Performance")
     fbar_open()
     c1, c2, c3 = st.columns([1.5,1.5,1])
-    with c1: sel_stat = pills("Status",        df["Order_Status"].unique(),  "dl_stat")
-    with c2: sel_ship = pills("Shipping Mode", df["Shipping_Mode"].unique(), "dl_ship")
+    with c1: sel_stat  = pills("Status",        df["Order_Status"].unique(),  "dl_stat")
+    with c2: sel_ship  = pills("Shipping Mode", df["Shipping_Mode"].unique(), "dl_ship")
     with c3: sel_delay = st.slider("Max Delay Days", 0, int(df["Delay_Days"].max()), int(df["Delay_Days"].max()), key="dl_delay")
     fbar_close()
 
     d = df[df["Order_Status"].isin(sel_stat) & df["Shipping_Mode"].isin(sel_ship) & (df["Delay_Days"]<=sel_delay)]
     con = sqlite3.connect(":memory:"); d.to_sql("sc", con, index=False, if_exists="replace")
-    n = len(d); delayed=(d["Order_Status"]=="Delayed").sum(); on_time=(d["Order_Status"]=="Delivered").sum()
+    n=len(d); delayed=(d["Order_Status"]=="Delayed").sum(); on_time=(d["Order_Status"]=="Delivered").sum()
     in_transit=(d["Order_Status"]=="In Transit").sum(); dd=d[d["Delay_Days"]>0]["Delay_Days"]; avg_delay=dd.mean() if len(dd) else 0
 
     st.markdown(kpi_row([
-        kpi("📦","TOTAL ORDERS",f"{n:,}",         "in selection",                                         "indigo"),
-        kpi("🚨","DELAYED",     f"{delayed:,}",   f"{delayed/n*100:.1f}% rate" if n else "0%",             "red"),
-        kpi("✅","DELIVERED",   f"{on_time:,}",   f"{on_time/n*100:.1f}% on-time" if n else "0%",          "green"),
+        kpi("📦","TOTAL ORDERS",f"{n:,}",          "in selection",                                        "indigo"),
+        kpi("🚨","DELAYED",     f"{delayed:,}",    f"{delayed/n*100:.1f}% rate" if n else "0%",            "red"),
+        kpi("✅","DELIVERED",   f"{on_time:,}",    f"{on_time/n*100:.1f}% on-time" if n else "0%",         "green"),
         kpi("⏳","AVG DELAY",   f"{avg_delay:.1f}d","when delayed",                                        "yellow"),
         kpi("🔄","IN TRANSIT",  f"{in_transit:,}", "pending delivery",                                     "cyan"),
     ]), unsafe_allow_html=True)
@@ -396,11 +354,11 @@ elif page == "cost":
     avg_disc=d["Discount_Pct"].mean() if n else 0; avg_unit=d["Unit_Cost_INR"].mean() if n else 0
 
     st.markdown(kpi_row([
-        kpi("💰","TOTAL REVENUE",f"₹{rev/1e5:.1f}L",         "final cost INR",                                 "cyan"),
-        kpi("🚛","TOTAL FREIGHT",f"₹{freight/1e5:.1f}L",     f"{freight/rev*100:.1f}% of rev" if rev else "–",  "red"),
-        kpi("🏷️","AVG DISCOUNT", f"{avg_disc:.1f}%",           "applied to orders",                             "yellow"),
-        kpi("📈","NET MARGIN",   f"₹{(rev-freight)/1e5:.1f}L","revenue − freight",                             "green"),
-        kpi("📦","AVG UNIT COST",f"₹{avg_unit:,.0f}",          "per unit",                                     "indigo"),
+        kpi("💰","TOTAL REVENUE",f"₹{rev/1e5:.1f}L",          "final cost INR",                                "cyan"),
+        kpi("🚛","TOTAL FREIGHT",f"₹{freight/1e5:.1f}L",      f"{freight/rev*100:.1f}% of rev" if rev else "–", "red"),
+        kpi("🏷️","AVG DISCOUNT", f"{avg_disc:.1f}%",            "applied to orders",                            "yellow"),
+        kpi("📈","NET MARGIN",   f"₹{(rev-freight)/1e5:.1f}L", "revenue − freight",                            "green"),
+        kpi("📦","AVG UNIT COST",f"₹{avg_unit:,.0f}",           "per unit",                                    "indigo"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
