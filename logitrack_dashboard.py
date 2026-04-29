@@ -17,13 +17,11 @@ st.markdown("""
 *,*::before,*::after{font-family:'Inter',-apple-system,sans-serif!important;box-sizing:border-box;}
 .stApp{background:#030312!important;color:#e2e8f0!important;}
 
-/* ── SIDEBAR ── */
 [data-testid="stSidebar"]{
   width:210px!important;min-width:210px!important;max-width:210px!important;
   background:linear-gradient(180deg,#060618 0%,#04040f 100%)!important;
   border-right:1px solid rgba(129,140,248,0.08)!important;}
 [data-testid="stSidebarContent"]{padding:16px 10px!important;}
-
 [data-testid="stSidebarCollapseButton"]{display:none!important;}
 [data-testid="collapsedControl"]{display:none!important;}
 button[kind="header"]{display:none!important;}
@@ -31,7 +29,6 @@ button[kind="header"]{display:none!important;}
 .block-container{padding-top:2.2rem!important;padding-bottom:1rem!important;max-width:100%!important;}
 #MainMenu,footer,[data-testid="stToolbar"],.viewerBadge_container__1QSob{display:none!important;visibility:hidden!important;}
 
-/* ── NAV BUTTONS ── */
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button{
   background:rgba(255,255,255,0.02)!important;border:none!important;
   color:#4b5563!important;font-weight:500!important;font-size:12px!important;
@@ -41,32 +38,27 @@ button[kind="header"]{display:none!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button:hover{
   background:rgba(129,140,248,0.1)!important;color:#a5b4fc!important;}
 
-/* ── PILLS – very compact ── */
-[data-testid="stPills"]{gap:3px!important;flex-wrap:wrap!important;row-gap:3px!important;}
-[data-testid="stPills"] span,
+/* ── PILLS – nuclear small ── */
+[data-testid="stPills"]{gap:2px!important;flex-wrap:wrap!important;row-gap:2px!important;}
+[data-testid="stPillsOption"],
 [data-testid="stPills"] button,
-[data-testid="stPills"] span[role="checkbox"],
-[data-testid="stPills"] span[role="radio"]{
-  background:transparent!important;border:1px solid rgba(129,140,248,0.18)!important;
-  color:#64748b!important;font-size:8px!important;font-weight:500!important;
-  padding:1px 6px!important;border-radius:20px!important;cursor:pointer!important;
-  transition:all 0.12s!important;line-height:1.4!important;
-  min-height:0!important;height:auto!important;}
-[data-testid="stPills"] span[role="checkbox"][aria-checked="true"],
-[data-testid="stPills"] span[role="radio"][aria-checked="true"],
-[data-testid="stPills"] span[aria-selected="true"],
+[data-testid="stPills"] span{
+  font-size:7.5px!important;font-weight:500!important;
+  padding:1px 5px!important;line-height:1.3!important;
+  min-height:0!important;height:auto!important;
+  border-radius:20px!important;}
+[data-testid="stPillsOption"][aria-pressed="true"],
+[data-testid="stPills"] button[aria-pressed="true"],
 [data-testid="stPills"] button[aria-selected="true"]{
   background:rgba(129,140,248,0.15)!important;
   border-color:rgba(129,140,248,0.65)!important;
-  color:#a5b4fc!important;font-weight:700!important;
-  box-shadow:0 0 8px rgba(129,140,248,0.2)!important;}
+  color:#a5b4fc!important;font-weight:700!important;}
 [data-testid="stPills"] label,
 [data-testid="stPills"] p{
   font-size:7px!important;color:#2d3748!important;
-  text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;
-  margin-bottom:2px!important;margin-top:0!important;}
+  text-transform:uppercase!important;letter-spacing:0.12em!important;
+  font-weight:800!important;margin-bottom:2px!important;margin-top:0!important;}
 
-/* ── CHART CARDS – glow (overflow:hidden HATA DIYA – charts wapas aayenge) ── */
 @keyframes chart-glow{
   0%,100%{box-shadow:0 0 20px rgba(129,140,248,0.08),0 0 40px rgba(129,140,248,0.04),0 6px 24px rgba(0,0,0,0.55);}
   50%{box-shadow:0 0 35px rgba(129,140,248,0.16),0 0 70px rgba(129,140,248,0.07),0 6px 24px rgba(0,0,0,0.55);}
@@ -81,18 +73,15 @@ button[kind="header"]{display:none!important;}
 [data-testid="stPlotlyChart"] .js-plotly-plot{
   border-radius:14px!important;overflow:visible!important;}
 
-/* ── SLIDER ── */
 [data-testid="stSlider"] [role="slider"]{background:#818cf8!important;}
 hr{border-color:rgba(129,140,248,0.06)!important;margin:12px 0!important;}
 
-/* ── MAIN AREA BUTTONS ── */
 [data-testid="stMainBlockContainer"] [data-testid="stButton"]>button{
   background:linear-gradient(135deg,#4f46e5,#7c3aed)!important;
   color:white!important;border:none!important;border-radius:10px!important;
   font-weight:700!important;font-size:13px!important;
   box-shadow:0 4px 20px rgba(99,102,241,0.4)!important;}
 
-/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(129,140,248,0.2);border-radius:4px;}
@@ -169,7 +158,6 @@ def chart_layout(height=300, title="", icon="", hovermode="closest"):
             namelength=-1,
         ),
         hovermode=hovermode,
-        transition=dict(duration=600, easing="cubic-in-out"),
     )
 
 def show(fig, height=300, title="", icon="", hovermode="closest", tickangle=None):
@@ -333,12 +321,12 @@ if page == "overview":
     avg_q   = rated.mean() if len(rated) else 0
 
     st.markdown(kpi_row([
-        kpi("📦", "TOTAL ORDERS",   f"{n:,}",                   "filtered records",                              "indigo"),
-        kpi("💰", "REVENUE",        f"₹{rev/1e5:.1f}L",          "final cost INR",                                "cyan"),
-        kpi("⏱️", "AVG LEAD TIME",  f"{avg_lt:.1f}d",             "order → delivery",                             "green"),
-        kpi("🚨", "DELAYED ORDERS", f"{delayed:,}",              f"{delayed/n*100:.0f}% delay rate" if n else "0%","red"),
-        kpi("✅", "DELIVERED",      f"{dlvrd/n*100:.0f}%",       f"{dlvrd} orders",                               "green"),
-        kpi("⭐", "AVG QUALITY",    f"{avg_q:.2f}" if avg_q else "–", "rating / 5.0",                            "yellow"),
+        kpi("📦", "TOTAL ORDERS",   f"{n:,}",                   "filtered records",                               "indigo"),
+        kpi("💰", "REVENUE",        f"₹{rev/1e5:.1f}L",          "final cost INR",                                 "cyan"),
+        kpi("⏱️", "AVG LEAD TIME",  f"{avg_lt:.1f}d",             "order → delivery",                              "green"),
+        kpi("🚨", "DELAYED ORDERS", f"{delayed:,}",              f"{delayed/n*100:.0f}% delay rate" if n else "0%", "red"),
+        kpi("✅", "DELIVERED",      f"{dlvrd/n*100:.0f}%" if n else "0%", f"{dlvrd} orders",                       "green"),
+        kpi("⭐", "AVG QUALITY",    f"{avg_q:.2f}" if avg_q else "–", "rating / 5.0",                             "yellow"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns([3, 2])
@@ -350,10 +338,8 @@ if page == "overview":
             x=mdf["Month"], y=mdf["Orders"],
             mode="lines+markers",
             line=dict(color="#818cf8", width=2.5, shape="spline"),
-            marker=dict(size=5, color="#818cf8",
-                        line=dict(width=2, color="#0a0a1f"), symbol="circle"),
-            fill="tozeroy",
-            fillcolor="rgba(129,140,248,0.16)",
+            marker=dict(size=5, color="#818cf8", line=dict(width=2, color="#0a0a1f"), symbol="circle"),
+            fill="tozeroy", fillcolor="rgba(129,140,248,0.16)",
             name="Orders",
             hovertemplate="<b>%{x}</b><br>Orders: <b>%{y}</b><extra></extra>",
         ))
@@ -427,11 +413,11 @@ elif page == "delivery":
     avg_delay  = dd.mean() if len(dd) else 0
 
     st.markdown(kpi_row([
-        kpi("📦", "TOTAL ORDERS", f"{n:,}",                 "in selection",                                        "indigo"),
-        kpi("🚨", "DELAYED",      f"{delayed:,}",            f"{delayed/n*100:.1f}% rate" if n else "0%",           "red"),
-        kpi("✅", "DELIVERED",    f"{on_time:,}",            f"{on_time/n*100:.1f}% on-time" if n else "0%",        "green"),
-        kpi("⏳", "AVG DELAY",    f"{avg_delay:.1f}d",        "when delayed",                                       "yellow"),
-        kpi("🔄", "IN TRANSIT",   f"{in_transit:,}",          "pending delivery",                                   "cyan"),
+        kpi("📦", "TOTAL ORDERS", f"{n:,}",        "in selection",                                      "indigo"),
+        kpi("🚨", "DELAYED",      f"{delayed:,}",   f"{delayed/n*100:.1f}% rate" if n else "0%",         "red"),
+        kpi("✅", "DELIVERED",    f"{on_time:,}",   f"{on_time/n*100:.1f}% on-time" if n else "0%",      "green"),
+        kpi("⏳", "AVG DELAY",    f"{avg_delay:.1f}d", "when delayed",                                   "yellow"),
+        kpi("🔄", "IN TRANSIT",   f"{in_transit:,}", "pending delivery",                                 "cyan"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
@@ -464,10 +450,7 @@ elif page == "delivery":
             marker_color="#f43f5e", marker_cornerradius=5,
             hovertemplate="<b>%{x}</b><br>Delayed: <b>%{y}</b><extra></extra>",
         ))
-        fig.update_layout(
-            **chart_layout(290, "Monthly Orders vs Delays", "📅", "x unified"),
-            barmode="group"
-        )
+        fig.update_layout(**chart_layout(290, "Monthly Orders vs Delays", "📅", "x unified"), barmode="group")
         fig.update_xaxes(tickangle=45, tickfont=dict(size=9))
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
@@ -520,11 +503,11 @@ elif page == "cost":
     avg_unit = d["Unit_Cost_INR"].mean() if n else 0
 
     st.markdown(kpi_row([
-        kpi("💰", "TOTAL REVENUE", f"₹{rev/1e5:.1f}L",           "final cost INR",                                "cyan"),
-        kpi("🚛", "TOTAL FREIGHT", f"₹{freight/1e5:.1f}L",        f"{freight/rev*100:.1f}% of rev" if rev else "–","red"),
-        kpi("🏷️", "AVG DISCOUNT",  f"{avg_disc:.1f}%",             "applied to orders",                            "yellow"),
-        kpi("📈", "NET MARGIN",    f"₹{(rev-freight)/1e5:.1f}L",   "revenue − freight",                            "green"),
-        kpi("📦", "AVG UNIT COST", f"₹{avg_unit:,.0f}",             "per unit",                                    "indigo"),
+        kpi("💰", "TOTAL REVENUE", f"₹{rev/1e5:.1f}L",          "final cost INR",                                "cyan"),
+        kpi("🚛", "TOTAL FREIGHT", f"₹{freight/1e5:.1f}L",       f"{freight/rev*100:.1f}% of rev" if rev else "–","red"),
+        kpi("🏷️", "AVG DISCOUNT",  f"{avg_disc:.1f}%",            "applied to orders",                            "yellow"),
+        kpi("📈", "NET MARGIN",    f"₹{(rev-freight)/1e5:.1f}L",  "revenue − freight",                            "green"),
+        kpi("📦", "AVG UNIT COST", f"₹{avg_unit:,.0f}",            "per unit",                                    "indigo"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
@@ -613,11 +596,11 @@ elif page == "supplier":
     top_sup  = d.groupby("Supplier_Name")["Final_Cost_INR"].sum().idxmax()[:14] if n else "N/A"
 
     st.markdown(kpi_row([
-        kpi("🏢", "SUPPLIERS",    f"{n_sup}",                     "active suppliers",    "indigo"),
+        kpi("🏢", "SUPPLIERS",    f"{n_sup}",                       "active suppliers",  "indigo"),
         kpi("⭐", "AVG QUALITY",  f"{avg_q:.2f}" if avg_q else "–", "rating / 5.0",      "yellow"),
-        kpi("🔴", "LOW QUALITY",  f"{low_q}",                     "ratings below 3.0",   "red"),
-        kpi("⏱️", "AVG LEAD",     f"{avg_lt:.1f}d",                "order → delivery",   "cyan"),
-        kpi("🥇", "TOP SUPPLIER", top_sup,                         "by total revenue",    "green"),
+        kpi("🔴", "LOW QUALITY",  f"{low_q}",                       "ratings below 3.0", "red"),
+        kpi("⏱️", "AVG LEAD",     f"{avg_lt:.1f}d",                  "order → delivery",  "cyan"),
+        kpi("🥇", "TOP SUPPLIER", top_sup,                           "by total revenue",  "green"),
     ]), unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
@@ -707,11 +690,11 @@ elif page == "warehouse":
     avg_qty     = d["Quantity"].mean() if n else 0
 
     st.markdown(kpi_row([
-        kpi("🏭", "WAREHOUSES",    f"{n_wh}",         "active locations",  "indigo"),
-        kpi("📦", "TOTAL ORDERS",  f"{n:,}",           "filtered orders",   "cyan"),
-        kpi("🏆", "MOST ACTIVE",   most_active,        "by order count",    "green"),
-        kpi("🚨", "MOST DELAYS",   most_delay,         "by delay count",    "red"),
-        kpi("📊", "AVG QTY/ORDER", f"{avg_qty:.1f}",   "units per order",   "yellow"),
+        kpi("🏭", "WAREHOUSES",    f"{n_wh}",        "active locations", "indigo"),
+        kpi("📦", "TOTAL ORDERS",  f"{n:,}",          "filtered orders",  "cyan"),
+        kpi("🏆", "MOST ACTIVE",   most_active,       "by order count",   "green"),
+        kpi("🚨", "MOST DELAYS",   most_delay,        "by delay count",   "red"),
+        kpi("📊", "AVG QTY/ORDER", f"{avg_qty:.1f}",  "units per order",  "yellow"),
     ]), unsafe_allow_html=True)
 
     q = pd.read_sql("""SELECT REPLACE(Warehouse,'WH-','') AS WH,
@@ -729,10 +712,7 @@ elif page == "warehouse":
         marker_color="#f43f5e", marker_cornerradius=8,
         hovertemplate="<b>WH-%{x}</b><br>Delayed: <b>%{y}</b><extra></extra>",
     ))
-    fig.update_layout(
-        **chart_layout(300, "Orders vs Delays by Warehouse", "🏭", "closest"),
-        barmode="group"
-    )
+    fig.update_layout(**chart_layout(300, "Orders vs Delays by Warehouse", "🏭", "closest"), barmode="group")
     fig.update_xaxes(tickangle=30, tickfont=dict(size=10))
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
@@ -760,7 +740,6 @@ elif page == "warehouse":
         show(fig, height=300, title="Category Mix by Warehouse", icon="📁", tickangle=30)
 
 
-# ─── Footer ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <div style="text-align:center;color:#0f172a;font-size:10px;margin-top:28px;
   padding-top:12px;border-top:1px solid rgba(129,140,248,0.05);">
