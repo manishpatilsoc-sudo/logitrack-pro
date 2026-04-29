@@ -17,14 +17,13 @@ st.markdown("""
 *,*::before,*::after{font-family:'Inter',-apple-system,sans-serif!important;box-sizing:border-box;}
 .stApp{background:#030312!important;color:#e2e8f0!important;}
 
-/* ── SIDEBAR – narrower so charts get more space ── */
+/* ── SIDEBAR ── */
 [data-testid="stSidebar"]{
   width:210px!important;min-width:210px!important;max-width:210px!important;
   background:linear-gradient(180deg,#060618 0%,#04040f 100%)!important;
   border-right:1px solid rgba(129,140,248,0.08)!important;}
 [data-testid="stSidebarContent"]{padding:16px 10px!important;}
 
-/* ── HIDE collapse arrow & keyboard_double text ── */
 [data-testid="stSidebarCollapseButton"]{display:none!important;}
 [data-testid="collapsedControl"]{display:none!important;}
 button[kind="header"]{display:none!important;}
@@ -67,7 +66,7 @@ button[kind="header"]{display:none!important;}
   text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;
   margin-bottom:2px!important;margin-top:0!important;}
 
-/* ── CHART CARDS – glow + pulse animation ── */
+/* ── CHART CARDS – glow (overflow:hidden HATA DIYA – charts wapas aayenge) ── */
 @keyframes chart-glow{
   0%,100%{box-shadow:0 0 20px rgba(129,140,248,0.08),0 0 40px rgba(129,140,248,0.04),0 6px 24px rgba(0,0,0,0.55);}
   50%{box-shadow:0 0 35px rgba(129,140,248,0.16),0 0 70px rgba(129,140,248,0.07),0 6px 24px rgba(0,0,0,0.55);}
@@ -77,7 +76,10 @@ button[kind="header"]{display:none!important;}
   border:1px solid rgba(129,140,248,0.12)!important;
   border-radius:16px!important;
   animation:chart-glow 4s ease-in-out infinite!important;
-  overflow:hidden!important;padding:2px!important;}
+  padding:2px!important;}
+[data-testid="stPlotlyChart"] iframe,
+[data-testid="stPlotlyChart"] .js-plotly-plot{
+  border-radius:14px!important;overflow:visible!important;}
 
 /* ── SLIDER ── */
 [data-testid="stSlider"] [role="slider"]{background:#818cf8!important;}
@@ -124,21 +126,21 @@ def chart_layout(height=300, title="", icon="", hovermode="closest"):
         plot_bgcolor="rgba(0,0,0,0)",
         height=height,
         font=dict(color="#64748b", family="Inter,-apple-system,sans-serif", size=11),
-        margin=dict(l=14, r=14, t=68, b=55),
+        margin=dict(l=14, r=14, t=52, b=48),
         title=dict(
             text=f"<b>{icon}  {title}</b>" if title else "",
-            x=0.01, y=0.98,
+            x=0.01, y=0.97,
             font=dict(color="#c7d2fe", size=13, family="Inter"),
             pad=dict(l=0, t=0)
         ),
         legend=dict(
-            font=dict(color="#94a3b8", size=9),
+            font=dict(color="#94a3b8", size=8),
             bgcolor="rgba(0,0,0,0)",
             orientation="h",
-            yanchor="top", y=0.90,
+            yanchor="bottom", y=1.0,
             xanchor="left", x=0.0,
             itemsizing="constant",
-            itemwidth=28,
+            itemwidth=24,
             tracegroupgap=2,
         ),
         xaxis=dict(
@@ -348,8 +350,10 @@ if page == "overview":
             x=mdf["Month"], y=mdf["Orders"],
             mode="lines+markers",
             line=dict(color="#818cf8", width=2.5, shape="spline"),
-            marker=dict(size=5, color="#818cf8", line=dict(width=2, color="#0a0a1f"), symbol="circle"),
-            fill="tozeroy", fillcolor="rgba(129,140,248,0.16)",
+            marker=dict(size=5, color="#818cf8",
+                        line=dict(width=2, color="#0a0a1f"), symbol="circle"),
+            fill="tozeroy",
+            fillcolor="rgba(129,140,248,0.16)",
             name="Orders",
             hovertemplate="<b>%{x}</b><br>Orders: <b>%{y}</b><extra></extra>",
         ))
@@ -756,6 +760,7 @@ elif page == "warehouse":
         show(fig, height=300, title="Category Mix by Warehouse", icon="📁", tickangle=30)
 
 
+# ─── Footer ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <div style="text-align:center;color:#0f172a;font-size:10px;margin-top:28px;
   padding-top:12px;border-top:1px solid rgba(129,140,248,0.05);">
