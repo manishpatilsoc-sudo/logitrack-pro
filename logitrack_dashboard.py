@@ -4,12 +4,7 @@ import sqlite3
 import plotly.express as px
 import plotly.graph_objects as go
 
-st.set_page_config(
-    page_title="LogiTrack Pro · Supply Chain",
-    page_icon="📦",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="LogiTrack Pro · Supply Chain", page_icon="📦", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
 <style>
@@ -21,40 +16,30 @@ st.markdown("""
 .block-container{padding-top:1.6rem!important;padding-bottom:1rem!important;max-width:100%!important;}
 #MainMenu,footer,[data-testid="stToolbar"],.viewerBadge_container__1QSob{display:none!important;visibility:hidden!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button{
-  background:rgba(255,255,255,0.02)!important;border:none!important;
-  color:#4b5563!important;font-weight:500!important;font-size:13px!important;
-  border-radius:12px!important;text-align:left!important;
-  padding:9px 12px!important;margin-bottom:2px!important;
+  background:rgba(255,255,255,0.02)!important;border:none!important;color:#4b5563!important;
+  font-weight:500!important;font-size:13px!important;border-radius:12px!important;
+  text-align:left!important;padding:9px 12px!important;margin-bottom:2px!important;
   width:100%!important;justify-content:flex-start!important;transition:all 0.15s!important;}
-[data-testid="stSidebarContent"] [data-testid="stButton"]>button:hover{
-  background:rgba(129,140,248,0.1)!important;color:#a5b4fc!important;}
+[data-testid="stSidebarContent"] [data-testid="stButton"]>button:hover{background:rgba(129,140,248,0.1)!important;color:#a5b4fc!important;}
 [data-testid="stPills"]{gap:5px!important;flex-wrap:wrap!important;}
-[data-testid="stPills"] span[role="checkbox"],
-[data-testid="stPills"] span[role="radio"]{
+[data-testid="stPills"] span[role="checkbox"],[data-testid="stPills"] span[role="radio"]{
   background:transparent!important;border:1px solid rgba(129,140,248,0.22)!important;
   color:#64748b!important;font-size:11px!important;font-weight:500!important;
-  padding:4px 13px!important;border-radius:20px!important;cursor:pointer!important;
-  transition:all 0.12s!important;line-height:1.5!important;}
+  padding:4px 13px!important;border-radius:20px!important;cursor:pointer!important;transition:all 0.12s!important;line-height:1.5!important;}
 [data-testid="stPills"] span[role="checkbox"][aria-checked="true"],
 [data-testid="stPills"] span[role="radio"][aria-checked="true"],
 [data-testid="stPills"] span[aria-selected="true"]{
-  background:rgba(129,140,248,0.15)!important;
-  border-color:rgba(129,140,248,0.7)!important;
-  color:#a5b4fc!important;font-weight:700!important;
-  box-shadow:0 0 10px rgba(129,140,248,0.3)!important;}
-[data-testid="stPills"] label{
-  font-size:9px!important;color:#334155!important;
-  text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;}
+  background:rgba(129,140,248,0.15)!important;border-color:rgba(129,140,248,0.7)!important;
+  color:#a5b4fc!important;font-weight:700!important;box-shadow:0 0 10px rgba(129,140,248,0.3)!important;}
+[data-testid="stPills"] label{font-size:9px!important;color:#334155!important;text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;}
 [data-testid="stPlotlyChart"]{
-  border:1px solid rgba(129,140,248,0.15)!important;
+  border:1px solid rgba(129,140,248,0.18)!important;
   border-radius:16px!important;
-  box-shadow:0 0 28px rgba(129,140,248,0.1),0 0 60px rgba(129,140,248,0.04),0 6px 24px rgba(0,0,0,0.6)!important;
+  box-shadow:0 0 30px rgba(129,140,248,0.12),0 0 60px rgba(129,140,248,0.05),0 6px 24px rgba(0,0,0,0.7)!important;
   overflow:hidden!important;
-  background:rgba(8,8,22,0.95)!important;}
-[data-testid="stSlider"] [role="slider"]{background:#818cf8!important;}
+  background:rgba(6,6,20,0.98)!important;}
 hr{border-color:rgba(129,140,248,0.06)!important;margin:14px 0!important;}
 ::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(129,140,248,0.2);border-radius:4px;}
 </style>
 """, unsafe_allow_html=True)
@@ -72,13 +57,14 @@ PAL = ["#818cf8","#06b6d4","#10b981","#f59e0b","#ec4899","#f43f5e","#a78bfa","#2
 STATUS_CLR = {"Delivered":"#10b981","In Transit":"#3b82f6","Delayed":"#f43f5e","Cancelled":"#6b7280","Pending":"#f59e0b"}
 GLOW = {"indigo":"#818cf8","cyan":"#06b6d4","green":"#10b981","red":"#f43f5e","yellow":"#f59e0b","gray":"#6b7280","pink":"#ec4899"}
 
-def chart_layout(height=300, title="", icon="", hovermode="closest"):
+# FIXED: spike line solid white + no duplicate date in tooltip
+def chart_layout(height=300, title="", icon="", hovermode="x unified"):
     return dict(
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         height=height,
-        font=dict(color="#64748b", family="Inter,-apple-system,sans-serif", size=11),
+        font=dict(color="#64748b", family="Inter", size=11),
         margin=dict(l=14, r=14, t=48, b=14),
         title=dict(
             text=f"<b>{icon}  {title}</b>" if title else "",
@@ -87,18 +73,32 @@ def chart_layout(height=300, title="", icon="", hovermode="closest"):
         ),
         legend=dict(font=dict(color="#64748b",size=10),bgcolor="rgba(0,0,0,0)",
             orientation="h",yanchor="bottom",y=-0.18,xanchor="center",x=0.5),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.04)",tickfont=dict(color="#475569",size=10),showline=False,zeroline=False),
-        yaxis=dict(gridcolor="rgba(255,255,255,0.04)",tickfont=dict(color="#475569",size=10),showline=False,zeroline=False),
+        xaxis=dict(
+            gridcolor="rgba(255,255,255,0.04)",
+            tickfont=dict(color="#475569",size=10),
+            showline=False, zeroline=False,
+            showspikes=True,
+            spikecolor="rgba(255,255,255,0.6)",
+            spikethickness=1,
+            spikedash="solid",
+            spikemode="across",
+            spikesnap="cursor",
+        ),
+        yaxis=dict(
+            gridcolor="rgba(255,255,255,0.04)",
+            tickfont=dict(color="#475569",size=10),
+            showline=False, zeroline=False,
+        ),
         hoverlabel=dict(
             bgcolor="#0a0a1f",
-            bordercolor="rgba(129,140,248,0.55)",
+            bordercolor="rgba(129,140,248,0.6)",
             font=dict(color="#e2e8f0",size=12,family="Inter"),
             align="left", namelength=-1,
         ),
         hovermode=hovermode,
     )
 
-def show(fig, height=300, title="", icon="", hovermode="closest"):
+def show(fig, height=300, title="", icon="", hovermode="x unified"):
     fig.update_layout(**chart_layout(height, title, icon, hovermode))
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
@@ -108,15 +108,15 @@ def kpi(icon, label, value, sub, color):
 <div style="flex:1 1 145px;min-width:130px;position:relative;overflow:hidden;
   background:linear-gradient(145deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01));
   border:1px solid {g}30;border-radius:18px;padding:20px 18px;
-  box-shadow:0 0 40px {g}18,0 0 80px {g}08,0 6px 28px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.06);">
+  box-shadow:0 0 40px {g}18,0 6px 28px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.06);">
   <div style="position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;
     background:radial-gradient(circle,{g}40,transparent 68%);pointer-events:none;"></div>
   <div style="position:absolute;bottom:-20px;left:-20px;width:65px;height:65px;border-radius:50%;
     background:radial-gradient(circle,{g}18,transparent 68%);pointer-events:none;"></div>
   <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
-    <span style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:0.13em;font-weight:700;line-height:1.4;">{label}</span>
+    <span style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:0.13em;font-weight:700;">{label}</span>
     <div style="background:{g}20;border:1px solid {g}35;border-radius:9px;padding:6px 7px;
-      font-size:14px;line-height:1;box-shadow:0 0 14px {g}40;margin-left:8px;flex-shrink:0;">{icon}</div>
+      font-size:14px;line-height:1;box-shadow:0 0 14px {g}40;margin-left:8px;">{icon}</div>
   </div>
   <div style="font-size:30px;font-weight:900;color:#f8fafc;line-height:1;letter-spacing:-0.025em;margin-bottom:6px;">{value}</div>
   <div style="font-size:11px;color:#475569;font-weight:500;">{sub}</div>
@@ -126,13 +126,12 @@ def kpi_row(cards):
     return '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">'+''.join(cards)+'</div>'
 
 def page_header(title):
-    # FIXED: plain white text - no webkit gradient (was invisible on deploy)
     st.markdown(f"""
 <div style="margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(129,140,248,0.08);">
   <div style="display:flex;align-items:center;gap:12px;">
     <div style="width:6px;height:32px;background:linear-gradient(180deg,#a5b4fc,#4f46e5);
       border-radius:4px;flex-shrink:0;box-shadow:0 0 16px rgba(129,140,248,0.8);"></div>
-    <span style="font-size:26px;font-weight:900;color:#e2e8f0;letter-spacing:-0.025em;line-height:1.2;">{title}</span>
+    <span style="font-size:26px;font-weight:900;color:#e2e8f0;letter-spacing:-0.025em;">{title}</span>
   </div>
 </div>""", unsafe_allow_html=True)
 
@@ -172,10 +171,8 @@ CUBE = """<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="64"
 if "page" not in st.session_state:
     st.session_state.page = "overview"
 
-PAGES = [
-    ("📊","Overview","overview"),("🚚","Delivery","delivery"),
-    ("💰","Cost & Revenue","cost"),("🏆","Suppliers","supplier"),("🏭","Warehouse","warehouse"),
-]
+PAGES = [("📊","Overview","overview"),("🚚","Delivery","delivery"),
+         ("💰","Cost & Revenue","cost"),("🏆","Suppliers","supplier"),("🏭","Warehouse","warehouse")]
 
 with st.sidebar:
     st.markdown(f"""
@@ -187,7 +184,6 @@ with st.sidebar:
 </div>
 <div style="font-size:8px;color:#1e293b;text-transform:uppercase;letter-spacing:0.15em;font-weight:800;margin-bottom:8px;padding-left:4px;">Navigation</div>
 """, unsafe_allow_html=True)
-
     for icon, label, key in PAGES:
         if st.session_state.page == key:
             st.markdown(f"""
@@ -202,7 +198,6 @@ with st.sidebar:
             if st.button(f"{icon}  {label}", key=f"nav_{key}", use_container_width=True):
                 st.session_state.page = key
                 st.rerun()
-
     st.markdown("""<hr>
 <div style="text-align:center;padding:6px 0 2px;">
   <div style="font-size:10px;color:#1e293b;">Supply Chain Analytics</div>
@@ -243,8 +238,8 @@ if page == "overview":
             line=dict(color="#818cf8", width=2.5, shape="spline"),
             marker=dict(size=6, color="#818cf8", line=dict(width=2, color="#0a0a1f")),
             fill="tozeroy", fillcolor="rgba(129,140,248,0.12)", name="Orders",
-            hovertemplate="<b>%{x}</b><br>Orders: <b>%{y}</b><extra></extra>"))
-        show(fig, 300, "Monthly Orders Trend", "📅", "x unified")
+            hovertemplate="Orders: <b>%{y}</b><extra></extra>"))
+        show(fig, 300, "Monthly Orders Trend", "📅")
     with c2:
         sdf = pd.read_sql("SELECT Order_Status, COUNT(*) AS Count FROM sc GROUP BY Order_Status", con)
         fig = px.pie(sdf, values="Count", names="Order_Status", hole=0.54,
@@ -252,7 +247,7 @@ if page == "overview":
         fig.update_traces(textfont_size=11, textinfo="percent+label",
             marker=dict(line=dict(color="#030312", width=2.5)),
             hovertemplate="<b>%{label}</b><br>Orders: <b>%{value}</b><br>Share: <b>%{percent}</b><extra></extra>")
-        show(fig, 300, "Order Status Split", "🥧")
+        show(fig, 300, "Order Status Split", "🥧", "closest")
 
     c3, c4 = st.columns(2)
     with c3:
@@ -262,7 +257,7 @@ if page == "overview":
             marker_line_width=0, marker_cornerradius=8,
             hovertemplate="<b>%{x}</b><br>Revenue: <b>₹%{y:.0f}K</b><extra></extra>")
         fig.update_layout(showlegend=False)
-        show(fig, 290, "Revenue by Category (₹K)", "💰")
+        show(fig, 290, "Revenue by Category (₹K)", "💰", "closest")
     with c4:
         mrev = pd.read_sql("SELECT Month, ROUND(SUM(Final_Cost_INR)/1000,1) AS Rev_K FROM sc GROUP BY Month ORDER BY Month", con)
         fig = go.Figure()
@@ -270,8 +265,8 @@ if page == "overview":
             line=dict(color="#06b6d4", width=2.5, shape="spline"),
             marker=dict(size=6, color="#06b6d4", line=dict(width=2, color="#0a0a1f")),
             fill="tozeroy", fillcolor="rgba(6,182,212,0.09)",
-            hovertemplate="<b>%{x}</b><br>Revenue: <b>₹%{y:.0f}K</b><extra></extra>"))
-        show(fig, 290, "Monthly Revenue (₹K)", "📈", "x unified")
+            hovertemplate="Revenue: <b>₹%{y:.0f}K</b><extra></extra>"))
+        show(fig, 290, "Monthly Revenue (₹K)", "📈")
 
 # ═══ DELIVERY ═══
 elif page == "delivery":
@@ -307,7 +302,7 @@ elif page == "delivery":
             marker_line_width=0, marker_cornerradius=8,
             hovertemplate="<b>%{x}</b><br>Delay Rate: <b>%{y:.1f}%</b><extra></extra>")
         fig.update_layout(showlegend=False)
-        show(fig, 290, "Delay Rate by Shipping Mode", "📦")
+        show(fig, 290, "Delay Rate by Shipping Mode", "📦", "closest")
     with c2:
         q2 = pd.read_sql("""SELECT Month,
             SUM(CASE WHEN Order_Status='Delayed' THEN 1 ELSE 0 END) AS Delayed,
@@ -315,11 +310,11 @@ elif page == "delivery":
         fig = go.Figure()
         fig.add_trace(go.Bar(x=q2["Month"], y=q2["Total"], name="Total",
             marker_color="rgba(129,140,248,0.22)", marker_cornerradius=5,
-            hovertemplate="<b>%{x}</b><br>Total: <b>%{y}</b><extra></extra>"))
+            hovertemplate="Total: <b>%{y}</b><extra></extra>"))
         fig.add_trace(go.Bar(x=q2["Month"], y=q2["Delayed"], name="Delayed",
             marker_color="#f43f5e", marker_cornerradius=5,
-            hovertemplate="<b>%{x}</b><br>Delayed: <b>%{y}</b><extra></extra>"))
-        fig.update_layout(**chart_layout(290,"Monthly Orders vs Delays","📅","x unified"), barmode="overlay")
+            hovertemplate="Delayed: <b>%{y}</b><extra></extra>"))
+        fig.update_layout(**chart_layout(290,"Monthly Orders vs Delays","📅"), barmode="overlay")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar":False})
 
     c3, c4 = st.columns(2)
@@ -330,14 +325,13 @@ elif page == "delivery":
             marker_line_width=0, marker_cornerradius=8,
             hovertemplate="<b>%{x}</b><br>Avg Lead: <b>%{y:.1f} days</b><extra></extra>")
         fig.update_layout(showlegend=False)
-        show(fig, 290, "Avg Lead Time by Category", "⏱️")
+        show(fig, 290, "Avg Lead Time by Category", "⏱️", "closest")
     with c4:
         q4 = pd.read_sql("SELECT Category, Order_Status, COUNT(*) AS Count FROM sc GROUP BY Category, Order_Status", con)
-        fig = px.bar(q4, x="Category", y="Count", color="Order_Status",
-                     color_discrete_map=STATUS_CLR, barmode="stack")
+        fig = px.bar(q4, x="Category", y="Count", color="Order_Status", color_discrete_map=STATUS_CLR, barmode="stack")
         fig.update_traces(marker_line_width=0,
             hovertemplate="<b>%{x}</b> – %{fullData.name}<br>Count: <b>%{y}</b><extra></extra>")
-        show(fig, 290, "Order Status by Category", "📊")
+        show(fig, 290, "Order Status by Category", "📊", "closest")
 
 # ═══ COST ═══
 elif page == "cost":
@@ -374,7 +368,7 @@ elif page == "cost":
         fig.add_trace(go.Bar(name="Freight ₹K", x=q["Category"], y=q["Frgt_K"],
             marker_color="#f43f5e", marker_cornerradius=7,
             hovertemplate="<b>%{x}</b><br>Freight: <b>₹%{y:.0f}K</b><extra></extra>"))
-        fig.update_layout(**chart_layout(300,"Revenue vs Freight by Category (₹K)","💰"), barmode="group")
+        fig.update_layout(**chart_layout(300,"Revenue vs Freight by Category (₹K)","💰","closest"), barmode="group")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar":False})
     with c2:
         q2 = pd.read_sql("SELECT Month, ROUND(SUM(Final_Cost_INR)/1000,1) AS Rev_K FROM sc GROUP BY Month ORDER BY Month", con)
@@ -383,8 +377,8 @@ elif page == "cost":
             line=dict(color="#06b6d4", width=2.5, shape="spline"),
             marker=dict(size=6, color="#06b6d4", line=dict(width=2, color="#0a0a1f")),
             fill="tozeroy", fillcolor="rgba(6,182,212,0.09)",
-            hovertemplate="<b>%{x}</b><br>Revenue: <b>₹%{y:.0f}K</b><extra></extra>"))
-        show(fig, 300, "Monthly Revenue Trend (₹K)", "📈", "x unified")
+            hovertemplate="Revenue: <b>₹%{y:.0f}K</b><extra></extra>"))
+        show(fig, 300, "Monthly Revenue Trend (₹K)", "📈")
 
     c3, c4 = st.columns(2)
     with c3:
@@ -395,14 +389,14 @@ elif page == "cost":
             marker_line_width=0, marker_cornerradius=8,
             hovertemplate="<b>%{x}</b><br>Avg Freight: <b>₹%{y:,.0f}</b><extra></extra>")
         fig.update_layout(showlegend=False)
-        show(fig, 290, "Avg Freight by Shipping Mode", "🚢")
+        show(fig, 290, "Avg Freight by Shipping Mode", "🚢", "closest")
     with c4:
         pt = pd.read_sql("SELECT Payment_Terms, COUNT(*) AS Orders FROM sc GROUP BY Payment_Terms", con)
         fig = px.pie(pt, values="Orders", names="Payment_Terms", hole=0.5, color_discrete_sequence=PAL)
         fig.update_traces(textfont_size=11, textinfo="percent+label",
             marker=dict(line=dict(color="#030312", width=2.5)),
             hovertemplate="<b>%{label}</b><br>Orders: <b>%{value}</b><br>Share: <b>%{percent}</b><extra></extra>")
-        show(fig, 290, "Orders by Payment Terms", "💳")
+        show(fig, 290, "Orders by Payment Terms", "💳", "closest")
 
 # ═══ SUPPLIERS ═══
 elif page == "supplier":
@@ -437,7 +431,7 @@ elif page == "supplier":
             marker_line_width=0, marker_cornerradius=6,
             hovertemplate="<b>%{y}</b><br>Revenue: <b>₹%{x:.0f}K</b><extra></extra>")
         fig.update_coloraxes(showscale=False)
-        show(fig, 310, "Top 8 Suppliers by Revenue", "🥇")
+        show(fig, 310, "Top 8 Suppliers by Revenue", "🥇", "closest")
     with c2:
         q2 = pd.read_sql("""SELECT Supplier_Name, ROUND(AVG(Quality_Rating),2) AS AvgQ
             FROM sc WHERE Quality_Rating IS NOT NULL GROUP BY Supplier_Name ORDER BY AvgQ DESC LIMIT 8""", con)
@@ -448,7 +442,7 @@ elif page == "supplier":
                 marker_line_width=0, marker_cornerradius=6,
                 hovertemplate="<b>%{y}</b><br>Quality: <b>%{x:.2f} / 5.0</b><extra></extra>")
             fig.update_coloraxes(showscale=False)
-            show(fig, 310, "Quality Rating by Supplier", "⭐")
+            show(fig, 310, "Quality Rating by Supplier", "⭐", "closest")
 
     c3, c4 = st.columns(2)
     with c3:
@@ -457,7 +451,7 @@ elif page == "supplier":
         fig.update_traces(textfont_size=11, textinfo="percent+label",
             marker=dict(line=dict(color="#030312", width=2.5)),
             hovertemplate="<b>%{label}</b><br>Orders: <b>%{value}</b><br>Share: <b>%{percent}</b><extra></extra>")
-        show(fig, 290, "Orders by Supplier City", "📍")
+        show(fig, 290, "Orders by Supplier City", "📍", "closest")
     with c4:
         q4 = pd.read_sql("""SELECT Supplier_Name, ROUND(AVG(Lead_Time_Days),1) AS AvgLT
             FROM sc GROUP BY Supplier_Name ORDER BY AvgLT ASC LIMIT 8""", con)
@@ -468,7 +462,7 @@ elif page == "supplier":
             hovertemplate="<b>%{x}</b><br>Avg Lead: <b>%{y:.1f} days</b><extra></extra>")
         fig.update_coloraxes(showscale=False)
         fig.update_xaxes(tickangle=20, tickfont=dict(size=9))
-        show(fig, 290, "Avg Lead Time by Supplier", "⏱️")
+        show(fig, 290, "Avg Lead Time by Supplier", "⏱️", "closest")
 
 # ═══ WAREHOUSE ═══
 elif page == "warehouse":
@@ -505,11 +499,11 @@ elif page == "warehouse":
         fig = go.Figure()
         fig.add_trace(go.Bar(name="Total", x=q["WH"], y=q["Orders"],
             marker_color="rgba(129,140,248,0.25)", marker_cornerradius=6,
-            hovertemplate="<b>WH-%{x}</b><br>Total Orders: <b>%{y}</b><extra></extra>"))
+            hovertemplate="<b>WH-%{x}</b><br>Total: <b>%{y}</b><extra></extra>"))
         fig.add_trace(go.Bar(name="Delayed", x=q["WH"], y=q["Delayed"],
             marker_color="#f43f5e", marker_cornerradius=6,
             hovertemplate="<b>WH-%{x}</b><br>Delayed: <b>%{y}</b><extra></extra>"))
-        fig.update_layout(**chart_layout(290,"Orders vs Delays by Warehouse","🏭"), barmode="group")
+        fig.update_layout(**chart_layout(290,"Orders vs Delays by Warehouse","🏭","closest"), barmode="group")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar":False})
     with c2:
         q2 = pd.read_sql("""SELECT REPLACE(Warehouse,'WH-','') AS WH,
@@ -519,7 +513,7 @@ elif page == "warehouse":
         fig.update_traces(textfont_size=11, textinfo="percent+label",
             marker=dict(line=dict(color="#030312", width=2.5)),
             hovertemplate="<b>WH-%{label}</b><br>Revenue: <b>₹%{value:.0f}K</b><br>Share: <b>%{percent}</b><extra></extra>")
-        show(fig, 290, "Revenue by Warehouse (₹K)", "💰")
+        show(fig, 290, "Revenue by Warehouse (₹K)", "💰", "closest")
 
     c3, c4 = st.columns(2)
     with c3:
@@ -527,13 +521,13 @@ elif page == "warehouse":
         fig = px.bar(q3, x="WH", y="Count", color="Category", color_discrete_sequence=PAL, barmode="stack")
         fig.update_traces(marker_line_width=0,
             hovertemplate="<b>WH-%{x}</b> – %{fullData.name}<br>Count: <b>%{y}</b><extra></extra>")
-        show(fig, 290, "Category Mix by Warehouse", "📁")
+        show(fig, 290, "Category Mix by Warehouse", "📁", "closest")
     with c4:
         q4 = pd.read_sql("SELECT REPLACE(Warehouse,'WH-','') AS WH, Shipping_Mode, COUNT(*) AS Count FROM sc GROUP BY Warehouse, Shipping_Mode", con)
         fig = px.bar(q4, x="WH", y="Count", color="Shipping_Mode", color_discrete_sequence=PAL, barmode="stack")
         fig.update_traces(marker_line_width=0,
             hovertemplate="<b>WH-%{x}</b> – %{fullData.name}<br>Count: <b>%{y}</b><extra></extra>")
-        show(fig, 290, "Shipping Mode by Warehouse", "🚚")
+        show(fig, 290, "Shipping Mode by Warehouse", "🚚", "closest")
 
 st.markdown("""
 <div style="text-align:center;color:#0f172a;font-size:10px;margin-top:30px;
