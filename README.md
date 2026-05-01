@@ -9,11 +9,12 @@
 # 📦 LogiTrack Pro
 ### Supply Chain Analytics Dashboard
 
-**[🚀 Live Demo](https://manishpatil-logitrack-pro.streamlit.app)** · **[📄 Project Summary](docs/project_summary.md)** · **[📘 Setup Guide](reports/LogiTrack_Pro_Guide.pdf)**
+**[🚀 Live Demo](https://logitrack-pro-3qmnwlimx9vtb3tuj5oxhr.streamlit.app)** · **[📄 Project Summary](docs/project_summary.md)** · **[📘 Setup Guide](reports/LogiTrack_Pro_Guide.pdf)**
 
 </div>
 
 ---
+
 
 ## 🎯 The Story Behind This Project
 
