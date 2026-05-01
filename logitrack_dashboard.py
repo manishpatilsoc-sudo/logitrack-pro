@@ -446,7 +446,7 @@ def page_delivery():
     ot  = df[df["Delay_Days"] == 0].shape[0]
     ddf = df[df["Delay_Days"] > 0]
     ad  = ddf["Delay_Days"].mean() if len(ddf) else 0
-    st.markdown('<div class="kpi-grid">' +
+    st.markdown('<div class="kpi-grid">') +
         kpi("ON-TIME",    str(ot),                     "no delays",            "✅", "kg")  +
         kpi("AVG DELAY",  f"{ad:.1f}d",                "among delayed",        "⚠", "kr")  +
         kpi("DELIVERED",  str(vm.get("Delivered", 0)), "completed",            "📦", "kb")  +
