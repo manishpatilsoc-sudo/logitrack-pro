@@ -21,9 +21,9 @@ button[kind="header"]{display:none!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button{background:rgba(255,255,255,0.02)!important;border:none!important;color:#4b5563!important;font-weight:500!important;font-size:12px!important;border-radius:10px!important;text-align:left!important;padding:8px 10px!important;margin-bottom:2px!important;width:100%!important;justify-content:flex-start!important;transition:all 0.15s!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button:hover{background:rgba(129,140,248,0.1)!important;color:#a5b4fc!important;}
 [data-testid="stPills"]{gap:3px!important;row-gap:3px!important;flex-wrap:wrap!important;}
-button[data-testid="stBaseButton-pill"]{font-size:10px!important;padding:2px 9px!important;min-height:0!important;height:22px!important;line-height:1!important;border-radius:20px!important;border:1px solid rgba(129,140,248,0.2)!important;background:transparent!important;color:#64748b!important;cursor:pointer!important;font-weight:500!important;}
-button[data-testid="stBaseButton-pill"]:hover{border-color:rgba(129,140,248,0.5)!important;color:#a5b4fc!important;background:rgba(129,140,248,0.08)!important;}
-button[data-testid="stBaseButton-pill"][aria-pressed="true"]{background:rgba(129,140,248,0.15)!important;border-color:rgba(129,140,248,0.65)!important;color:#a5b4fc!important;font-weight:700!important;}
+[data-testid="stPills"] button,button[data-testid="stBaseButton-pill"],button[data-testid*="pill"]{font-size:10px!important;padding:2px 9px!important;min-height:0!important;height:22px!important;line-height:1!important;border-radius:20px!important;border:1px solid rgba(129,140,248,0.2)!important;background:transparent!important;color:#64748b!important;cursor:pointer!important;font-weight:500!important;font-family:Inter,sans-serif!important;}
+[data-testid="stPills"] button:hover,button[data-testid="stBaseButton-pill"]:hover,button[data-testid*="pill"]:hover{border-color:rgba(129,140,248,0.5)!important;color:#a5b4fc!important;background:rgba(129,140,248,0.08)!important;}
+[data-testid="stPills"] button[aria-pressed="true"],button[data-testid="stBaseButton-pill"][aria-pressed="true"],button[data-testid*="pill"][aria-pressed="true"]{background:rgba(129,140,248,0.15)!important;border-color:rgba(129,140,248,0.65)!important;color:#a5b4fc!important;font-weight:700!important;}
 [data-testid="stPills"] p,[data-testid="stPills"] label{font-size:7px!important;color:#2d3748!important;text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;margin-bottom:2px!important;margin-top:0!important;}
 @keyframes chart-glow{0%,100%{box-shadow:0 0 20px rgba(129,140,248,0.08),0 0 40px rgba(129,140,248,0.04),0 6px 24px rgba(0,0,0,0.55);}50%{box-shadow:0 0 35px rgba(129,140,248,0.16),0 0 70px rgba(129,140,248,0.07),0 6px 24px rgba(0,0,0,0.55);}}
 [data-testid="stPlotlyChart"]>div{background:linear-gradient(145deg,rgba(255,255,255,0.025),rgba(255,255,255,0.008))!important;border:1px solid rgba(129,140,248,0.12)!important;border-radius:16px!important;animation:chart-glow 4s ease-in-out infinite!important;padding:2px!important;}
@@ -224,6 +224,7 @@ elif page == "delivery":
         q4 = pd.read_sql("SELECT Category, Order_Status, COUNT(*) AS Count FROM sc GROUP BY Category, Order_Status", con)
         fig = px.bar(q4, x="Category", y="Count", color="Order_Status", color_discrete_map=STATUS_CLR, barmode="stack")
         fig.update_traces(marker_line_width=0, hovertemplate="<b>%{x}</b> – %{fullData.name}<br>Count: <b>%{y}</b><extra></extra>")
+        fig.update_layout(legend_title_text="")
         show(fig, height=290, title="Order Status by Category", icon="📊", tickangle=30)
 
 elif page == "cost":
@@ -376,6 +377,7 @@ elif page == "warehouse":
         q3 = pd.read_sql("SELECT REPLACE(Warehouse,'WH-','') AS WH, Category, COUNT(*) AS Count FROM sc GROUP BY Warehouse, Category", con)
         fig = px.bar(q3, x="WH", y="Count", color="Category", color_discrete_sequence=PAL, barmode="stack")
         fig.update_traces(marker_line_width=0, hovertemplate="<b>WH-%{x}</b> – %{fullData.name}<br>Count: <b>%{y}</b><extra></extra>")
+        fig.update_layout(legend_title_text="")
         show(fig, height=300, title="Category Mix by Warehouse", icon="📁", tickangle=30)
 
 st.markdown("""<div style="text-align:center;color:#0f172a;font-size:10px;margin-top:28px;padding-top:12px;border-top:1px solid rgba(129,140,248,0.05);">LogiTrack Pro · Supply Chain Analytics</div>""", unsafe_allow_html=True)
