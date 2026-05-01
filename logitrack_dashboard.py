@@ -11,19 +11,19 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *,*::before,*::after{font-family:'Inter',-apple-system,sans-serif!important;box-sizing:border-box;}
 .stApp{background:#030312!important;color:#e2e8f0!important;}
-[data-testid="stSidebar"]{width:210px!important;min-width:210px!important;max-width:210px!important;background:linear-gradient(180deg,#060618 0%,#04040f 100%)!important;border-right:1px solid rgba(129,140,248,0.08)!important;}
-[data-testid="stSidebarContent"]{padding:16px 10px!important;}
+[data-testid="stSidebar"]{width:250px!important;min-width:250px!important;max-width:250px!important;background:linear-gradient(180deg,#060618 0%,#04040f 100%)!important;border-right:1px solid rgba(129,140,248,0.08)!important;}
+[data-testid="stSidebarContent"]{padding:16px 12px!important;}
 [data-testid="stSidebarCollapseButton"]{display:none!important;}
 [data-testid="collapsedControl"]{display:none!important;}
 button[kind="header"]{display:none!important;}
-.block-container{padding-top:2.2rem!important;padding-bottom:1rem!important;max-width:100%!important;}
+.block-container{padding-top:3.5rem!important;padding-bottom:1rem!important;max-width:100%!important;}
 #MainMenu,footer,[data-testid="stToolbar"],.viewerBadge_container__1QSob{display:none!important;visibility:hidden!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button{background:rgba(255,255,255,0.02)!important;border:none!important;color:#4b5563!important;font-weight:500!important;font-size:12px!important;border-radius:10px!important;text-align:left!important;padding:8px 10px!important;margin-bottom:2px!important;width:100%!important;justify-content:flex-start!important;transition:all 0.15s!important;}
 [data-testid="stSidebarContent"] [data-testid="stButton"]>button:hover{background:rgba(129,140,248,0.1)!important;color:#a5b4fc!important;}
-[data-testid="stPills"]{gap:2px!important;row-gap:2px!important;flex-wrap:wrap!important;}
-[data-testid="stPillsOption"]{font-size:8px!important;padding:1px 6px!important;min-height:0!important;height:auto!important;line-height:1.3!important;border-radius:20px!important;border:1px solid rgba(129,140,248,0.2)!important;background:transparent!important;color:#64748b!important;cursor:pointer!important;}
-[data-testid="stPillsOption"]:hover{border-color:rgba(129,140,248,0.5)!important;color:#a5b4fc!important;}
-[data-testid="stPillsOption"][aria-pressed="true"],[data-testid="stPillsOption"][aria-selected="true"]{background:rgba(129,140,248,0.15)!important;border-color:rgba(129,140,248,0.65)!important;color:#a5b4fc!important;font-weight:700!important;}
+[data-testid="stPills"]{gap:3px!important;row-gap:3px!important;flex-wrap:wrap!important;}
+button[data-testid="stBaseButton-pill"]{font-size:10px!important;padding:2px 9px!important;min-height:0!important;height:22px!important;line-height:1!important;border-radius:20px!important;border:1px solid rgba(129,140,248,0.2)!important;background:transparent!important;color:#64748b!important;cursor:pointer!important;font-weight:500!important;}
+button[data-testid="stBaseButton-pill"]:hover{border-color:rgba(129,140,248,0.5)!important;color:#a5b4fc!important;background:rgba(129,140,248,0.08)!important;}
+button[data-testid="stBaseButton-pill"][aria-pressed="true"]{background:rgba(129,140,248,0.15)!important;border-color:rgba(129,140,248,0.65)!important;color:#a5b4fc!important;font-weight:700!important;}
 [data-testid="stPills"] p,[data-testid="stPills"] label{font-size:7px!important;color:#2d3748!important;text-transform:uppercase!important;letter-spacing:0.12em!important;font-weight:800!important;margin-bottom:2px!important;margin-top:0!important;}
 @keyframes chart-glow{0%,100%{box-shadow:0 0 20px rgba(129,140,248,0.08),0 0 40px rgba(129,140,248,0.04),0 6px 24px rgba(0,0,0,0.55);}50%{box-shadow:0 0 35px rgba(129,140,248,0.16),0 0 70px rgba(129,140,248,0.07),0 6px 24px rgba(0,0,0,0.55);}}
 [data-testid="stPlotlyChart"]>div{background:linear-gradient(145deg,rgba(255,255,255,0.025),rgba(255,255,255,0.008))!important;border:1px solid rgba(129,140,248,0.12)!important;border-radius:16px!important;animation:chart-glow 4s ease-in-out infinite!important;padding:2px!important;}
